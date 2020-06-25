@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing,
-    height: "60%",
+    height: "70%",
     flex: "1 0 200px",
   },
   text: {
@@ -33,26 +33,36 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login() {
+export default function Register() {
   const classes = useStyles();
   return (
     <Paper className={classes.paper}>
       <Typography className={classes.text} variant="h3">
-        Sign In
+        Sign Up
       </Typography>
       <form className={classes.form}>
+        <TextField
+          className={classes.input}
+          label="Full Name"
+          variant="outlined"
+        />
         <TextField className={classes.input} label="Email" variant="outlined" />
         <TextField
           className={classes.input}
           label="Password"
           variant="outlined"
         />
+        <TextField
+          className={classes.input}
+          label="Repeat password"
+          variant="outlined"
+        />
         <Button className={classes.button} variant="contained" color="primary">
-          Login
+          Register
         </Button>
       </form>
       <Typography className={classes.text} variant="body2">
-        Not our user yet? <Link to="/register">Register</Link>
+        Already registered? <Link to="/login">Login</Link>
       </Typography>
     </Paper>
   );
