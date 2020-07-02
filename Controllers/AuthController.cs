@@ -39,7 +39,8 @@ namespace Mxstrong.Controllers
 
       var userToCreate = new User
       {
-        Email = registerUserDto.Email
+        Email = registerUserDto.Email,
+        FullName = registerUserDto.FullName
       };
 
       await _repo.Register(userToCreate, registerUserDto.Password);

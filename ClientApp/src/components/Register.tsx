@@ -6,6 +6,8 @@ import {
   Button,
   Typography,
 } from "@material-ui/core";
+import { Field, reduxForm } from "redux-form";
+import { renderTextField } from "../helpers/formHelpers";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -33,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Register() {
+function Register() {
   const classes = useStyles();
   return (
     <Paper className={classes.paper}>
@@ -41,8 +43,10 @@ export default function Register() {
         Sign Up
       </Typography>
       <form className={classes.form}>
-        <TextField
+        <Field
           className={classes.input}
+          name="fullName"
+          component={renderTextField}
           label="Full Name"
           variant="outlined"
         />
@@ -67,3 +71,7 @@ export default function Register() {
     </Paper>
   );
 }
+
+export default reduxForm({
+  form: "RegisterForm",
+})(Register);
