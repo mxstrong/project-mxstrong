@@ -7,6 +7,9 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import { Field, reduxForm, InjectedFormProps } from "redux-form";
+import { renderTextField } from "../helpers/formHelpers";
+import { IIndexable } from "../helpers/types";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -33,21 +36,64 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login() {
+const validate = (values: IValues) => {
+  const errors: IErrors = {};
+  const requiredFields: string[] = ["email", "password"];
+
+  requiredFields.forEach((field) => {
+    if (!values[field]) {
+      errors[field] = "Required";
+    }
+  });
+
+  if (
+    values.email &&
+    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
+  ) {
+    errors.email = "Invalid email address";
+  }
+  return errors;
+};
+
+interface IValues extends IIndexable {
+  email: string;
+  password: string;
+}
+
+type IErrors = IIndexable & {
+  email?: string;
+  password?: string;
+};
+
+function LoginForm(props: InjectedFormProps<IValues, {}>) {
   const classes = useStyles();
+  const { handleSubmit, pristine, submitting } = props;
   return (
     <Paper className={classes.paper}>
       <Typography className={classes.text} variant="h3">
         Sign In
       </Typography>
-      <form className={classes.form}>
-        <TextField className={classes.input} label="Email" variant="outlined" />
-        <TextField
+      <form className={classes.form} onSubmit={handleSubmit}>
+        <Field
           className={classes.input}
+          name="email"
+          component={renderTextField}
+          label="Email"
+          variant="outlined"
+        />
+        <Field
+          className={classes.input}
+          name="password"
+          component={renderTextField}
           label="Password"
           variant="outlined"
         />
-        <Button className={classes.button} variant="contained" color="primary">
+        <Button
+          className={classes.button}
+          type="submit"
+          variant="contained"
+          color="primary"
+        >
           Login
         </Button>
       </form>
@@ -57,3 +103,8 @@ export default function Login() {
     </Paper>
   );
 }
+
+export default reduxForm({
+  form: "LoginForm",
+  validate,
+})(LoginForm);

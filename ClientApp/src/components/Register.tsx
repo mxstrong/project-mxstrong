@@ -1,14 +1,9 @@
 import React from "react";
-import {
-  makeStyles,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-} from "@material-ui/core";
-import { Field, reduxForm } from "redux-form";
+import { makeStyles, Paper, Button, Typography } from "@material-ui/core";
+import { Field, reduxForm, InjectedFormProps } from "redux-form";
 import { renderTextField } from "../helpers/formHelpers";
 import { Link } from "react-router-dom";
+import { IIndexable } from "../helpers/types";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -23,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing,
-    height: "70%",
+    height: "80%",
     flex: "1 0 200px",
   },
   text: {
@@ -35,14 +30,58 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Register() {
+interface IValues extends IIndexable {
+  fullName: string;
+  email: string;
+  password: string;
+  passwordRepeat: string;
+}
+
+type IErrors = IIndexable & {
+  fullName?: string;
+  email?: string;
+  password?: string;
+  passwordRepeat?: string;
+};
+
+const validate = (values: IValues) => {
+  const errors: IErrors = {};
+  const requiredFields: string[] = [
+    "fullName",
+    "email",
+    "password",
+    "passwordRepeat",
+  ];
+
+  requiredFields.forEach((field) => {
+    if (!values[field]) {
+      errors[field] = "Required";
+    }
+  });
+
+  if (values.password != values.passwordRepeat) {
+    errors.password = "Passwords are not matching";
+    errors.passwordRepeat = errors.password;
+  }
+
+  if (
+    values.email &&
+    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
+  ) {
+    errors.email = "Invalid email address";
+  }
+  return errors;
+};
+
+function RegisterForm(props: InjectedFormProps<IValues, {}>) {
   const classes = useStyles();
+  const { handleSubmit, pristine, submitting } = props;
   return (
     <Paper className={classes.paper}>
       <Typography className={classes.text} variant="h3">
         Sign Up
       </Typography>
-      <form className={classes.form}>
+      <form className={classes.form} onSubmit={handleSubmit}>
         <Field
           className={classes.input}
           name="fullName"
@@ -50,18 +89,34 @@ function Register() {
           label="Full Name"
           variant="outlined"
         />
-        <TextField className={classes.input} label="Email" variant="outlined" />
-        <TextField
+        <Field
           className={classes.input}
+          name="email"
+          component={renderTextField}
+          label="Email"
+          variant="outlined"
+        />
+        <Field
+          className={classes.input}
+          name="password"
+          component={renderTextField}
           label="Password"
           variant="outlined"
         />
-        <TextField
+        <Field
           className={classes.input}
+          name="passwordRepeat"
+          component={renderTextField}
           label="Repeat password"
           variant="outlined"
         />
-        <Button className={classes.button} variant="contained" color="primary">
+        <Button
+          className={classes.button}
+          type="submit"
+          disabled={pristine || submitting}
+          variant="contained"
+          color="primary"
+        >
           Register
         </Button>
       </form>
@@ -74,4 +129,5 @@ function Register() {
 
 export default reduxForm({
   form: "RegisterForm",
-})(Register);
+  validate,
+})(RegisterForm);
