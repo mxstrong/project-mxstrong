@@ -1,15 +1,10 @@
 import React from "react";
-import {
-  makeStyles,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-} from "@material-ui/core";
+import { makeStyles, Paper, Button, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { Field, reduxForm, InjectedFormProps } from "redux-form";
 import { renderTextField } from "../helpers/formHelpers";
-import { IIndexable } from "../helpers/types";
+import { IIndexable, IUserLoginData } from "../helpers/types";
+import { loginUser } from "../actions";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -23,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
   paper: {
-    padding: theme.spacing,
+    padding: theme.spacing(1),
     height: "60%",
     flex: "1 0 200px",
   },
@@ -36,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const validate = (values: IValues) => {
+const validate = (values: IUserLoginData) => {
   const errors: IErrors = {};
   const requiredFields: string[] = ["email", "password"];
 
@@ -55,17 +50,12 @@ const validate = (values: IValues) => {
   return errors;
 };
 
-interface IValues extends IIndexable {
-  email: string;
-  password: string;
-}
-
 type IErrors = IIndexable & {
   email?: string;
   password?: string;
 };
 
-function LoginForm(props: InjectedFormProps<IValues, {}>) {
+function LoginForm(props: InjectedFormProps<IUserLoginData, {}>) {
   const classes = useStyles();
   const { handleSubmit, pristine, submitting } = props;
   return (
@@ -73,9 +63,15 @@ function LoginForm(props: InjectedFormProps<IValues, {}>) {
       <Typography className={classes.text} variant="h3">
         Sign In
       </Typography>
-      <form className={classes.form} onSubmit={handleSubmit}>
+      <form
+        className={classes.form}
+        onSubmit={handleSubmit((values, dispatch) => {
+          dispatch(loginUser(values));
+        })}
+      >
         <Field
           className={classes.input}
+          type="email"
           name="email"
           component={renderTextField}
           label="Email"
@@ -83,6 +79,7 @@ function LoginForm(props: InjectedFormProps<IValues, {}>) {
         />
         <Field
           className={classes.input}
+          type="password"
           name="password"
           component={renderTextField}
           label="Password"
@@ -91,6 +88,7 @@ function LoginForm(props: InjectedFormProps<IValues, {}>) {
         <Button
           className={classes.button}
           type="submit"
+          disabled={pristine || submitting}
           variant="contained"
           color="primary"
         >

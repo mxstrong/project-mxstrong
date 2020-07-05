@@ -4,6 +4,7 @@ import { Field, reduxForm, InjectedFormProps } from "redux-form";
 import { renderTextField } from "../helpers/formHelpers";
 import { Link } from "react-router-dom";
 import { IIndexable } from "../helpers/types";
+import { CHECK_EMAIL_URL } from "../constants/urls";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -42,6 +43,22 @@ type IErrors = IIndexable & {
   email?: string;
   password?: string;
   passwordRepeat?: string;
+};
+
+const asyncValidate = async (values: IValues) => {
+  return new Promise(async (resolve, reject) => {
+    const response = await fetch(CHECK_EMAIL_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values.email),
+    });
+    if (!response.ok) {
+      reject({ email: "This email is already taken" });
+    }
+    resolve();
+  });
 };
 
 const validate = (values: IValues) => {
@@ -84,6 +101,7 @@ function RegisterForm(props: InjectedFormProps<IValues, {}>) {
       <form className={classes.form} onSubmit={handleSubmit}>
         <Field
           className={classes.input}
+          type="name"
           name="fullName"
           component={renderTextField}
           label="Full Name"
@@ -91,6 +109,7 @@ function RegisterForm(props: InjectedFormProps<IValues, {}>) {
         />
         <Field
           className={classes.input}
+          type="email"
           name="email"
           component={renderTextField}
           label="Email"
@@ -98,6 +117,7 @@ function RegisterForm(props: InjectedFormProps<IValues, {}>) {
         />
         <Field
           className={classes.input}
+          type="password"
           name="password"
           component={renderTextField}
           label="Password"
@@ -105,6 +125,7 @@ function RegisterForm(props: InjectedFormProps<IValues, {}>) {
         />
         <Field
           className={classes.input}
+          type="password"
           name="passwordRepeat"
           component={renderTextField}
           label="Repeat password"
@@ -130,4 +151,5 @@ function RegisterForm(props: InjectedFormProps<IValues, {}>) {
 export default reduxForm({
   form: "RegisterForm",
   validate,
+  asyncValidate,
 })(RegisterForm);
