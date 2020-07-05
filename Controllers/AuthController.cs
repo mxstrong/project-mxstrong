@@ -35,7 +35,10 @@ namespace Mxstrong.Controllers
       }
 
       if (await _repo.UserExists(registerUserDto.Email))
+      {
         return BadRequest("Email is already taken");
+      }
+        
 
       var userToCreate = new User
       {
@@ -51,7 +54,7 @@ namespace Mxstrong.Controllers
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto registerUserDto)
     {
-      var userFromRepo = await _repo.Login(registerUserDto.Email.ToLower(), registerUserDto.Password);
+      var userFromRepo = await _repo.Login(registerUserDto.Email, registerUserDto.Password);
       if (userFromRepo == null)
       {
         return Unauthorized();
@@ -75,6 +78,15 @@ namespace Mxstrong.Controllers
       var tokenString = tokenHandler.WriteToken(token);
 
       return Ok(new { tokenString });
+    }
+    [HttpPost]
+    public async Task<IActionResult> emailTaken(string email)
+    {
+      if (await _repo.UserExists(email))
+      {
+        return BadRequest("Email is already taken");
+      }
+      return Ok();
     }
   }
 }
