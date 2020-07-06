@@ -10,23 +10,26 @@ using Microsoft.IdentityModel.Tokens;
 using Mxstrong.Data;
 using Mxstrong.Dtos;
 using Mxstrong.Models;
+using Mxstrong.Services;
 
 namespace Mxstrong.Controllers
 {
-  [Route("api/[controller]")]
+  [Route("api/[controller]/[action]")]
   [ApiController]
   public class AuthController : ControllerBase
   {
     private readonly IAuthRepository _repo;
     private readonly IConfiguration _config;
+    private readonly IEmailSender _sender;
 
-    public AuthController(IAuthRepository repo, IConfiguration config)
+    public AuthController(IAuthRepository repo, IConfiguration config, IEmailSender sender)
     {
       _repo = repo;
       _config = config;
+      _sender = sender;
     }
 
-    [HttpPost("register")]
+    [HttpPost]
     public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto)
     { 
       if (!ModelState.IsValid)
@@ -43,15 +46,20 @@ namespace Mxstrong.Controllers
       var userToCreate = new User
       {
         Email = registerUserDto.Email,
-        FullName = registerUserDto.FullName
+        FullName = registerUserDto.FullName,
+        Activated = false
       };
 
-      await _repo.Register(userToCreate, registerUserDto.Password);
+      var createdUser = await _repo.Register(userToCreate, registerUserDto.Password);
+
+      var token = await _repo.GenerateActivationToken(createdUser.UserId);
+
+      await _sender.SendActivationEmail(createdUser, token);
 
       return StatusCode(201);
     }
 
-    [HttpPost("login")]
+    [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginDto registerUserDto)
     {
       var userFromRepo = await _repo.Login(registerUserDto.Email, registerUserDto.Password);
@@ -79,8 +87,20 @@ namespace Mxstrong.Controllers
 
       return Ok(new { tokenString });
     }
+
+    [HttpGet("{tokenId}")]
+    public async Task<IActionResult> Activate(string tokenId)
+    {
+      var user = await _repo.ActivateUser(tokenId);
+      if (user.Activated)
+      {
+        return Redirect("https://localhost:5001/login");
+      }
+      return BadRequest("Wrong activation token");
+    }
+
     [HttpPost]
-    public async Task<IActionResult> emailTaken(string email)
+    public async Task<IActionResult> EmailTaken(string email)
     {
       if (await _repo.UserExists(email))
       {

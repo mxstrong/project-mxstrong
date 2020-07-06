@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles, Paper, Button, Typography } from "@material-ui/core";
 import { Field, reduxForm, InjectedFormProps } from "redux-form";
 import { renderTextField } from "../helpers/formHelpers";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { IIndexable } from "../helpers/types";
-import { CHECK_EMAIL_URL } from "../constants/urls";
+import { CHECK_EMAIL_URL, REGISTER_URL } from "../constants/urls";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -93,12 +93,37 @@ const validate = (values: IValues) => {
 function RegisterForm(props: InjectedFormProps<IValues, {}>) {
   const classes = useStyles();
   const { handleSubmit, pristine, submitting } = props;
+  const [success, setSuccess] = useState(false);
+
+  const register = async (values: IValues) => {
+    const user = {
+      fullName: values.fullName,
+      email: values.email,
+      password: values.password,
+    };
+    const response = await fetch(REGISTER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+    if (response.status === 201) {
+      setSuccess(true);
+    } else {
+      Promise.reject();
+    }
+  };
+
+  if (success) {
+    return <Redirect to="/activate" />;
+  }
   return (
     <Paper className={classes.paper}>
       <Typography className={classes.text} variant="h3">
         Sign Up
       </Typography>
-      <form className={classes.form} onSubmit={handleSubmit}>
+      <form className={classes.form} onSubmit={handleSubmit(register)}>
         <Field
           className={classes.input}
           type="name"

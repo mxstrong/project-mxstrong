@@ -10,6 +10,7 @@ using Mxstrong.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Mxstrong.Services;
 
 namespace Mxstrong
 {
@@ -30,6 +31,7 @@ namespace Mxstrong
         options.UseNpgsql(Configuration["ConnectionString"]));
       services.AddControllers();
       services.AddScoped<IAuthRepository, AuthRepository>();
+      services.AddTransient<IEmailSender, EmailSender>();
 
       var key = Encoding.ASCII.GetBytes(Configuration["JWTSecret"]);
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {

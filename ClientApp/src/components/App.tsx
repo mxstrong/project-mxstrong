@@ -3,6 +3,7 @@ import Auth from "./Auth";
 import Login from "./Login";
 import Register from "./Register";
 import { Route, Switch, Redirect } from "react-router-dom";
+import Activate from "./Activate";
 
 const App = () => {
   return (
@@ -18,6 +19,11 @@ const App = () => {
       <Route path="/register">
         <Auth>
           <Register />
+        </Auth>
+      </Route>
+      <Route path="/activate">
+        <Auth>
+          <Activate />
         </Auth>
       </Route>
     </Switch>

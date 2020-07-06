@@ -20,7 +20,7 @@ namespace Mxstrong.Data
       {
         return null;
       }
-      // User does not exist.
+
       if (!VerifyPassword(password, user.PasswordHash, user.PasswordSalt))
       {
         return null;
@@ -58,11 +58,32 @@ namespace Mxstrong.Data
 
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
     {
-      using (var hmac = new System.Security.Cryptography.HMACSHA512())
+      using var hmac = new System.Security.Cryptography.HMACSHA512();
+      passwordSalt = hmac.Key;
+      passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+    }
+
+    public async Task<ActivationToken> GenerateActivationToken(string UserId)
+    {
+      var token = new ActivationToken()
       {
-        passwordSalt = hmac.Key;
-        passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-      }
+        Id = Guid.NewGuid().ToString(),
+        UserId = UserId,
+      };
+
+      await _context.ActivationTokens.AddAsync(token);
+      await _context.SaveChangesAsync();
+      return token;
+    }
+
+    public async Task<User> ActivateUser(string tokenId)
+    {
+      var token = await _context.ActivationTokens.SingleAsync(a => a.Id == tokenId);
+      var user = await _context.Users.FindAsync(token.UserId);
+      user.Activated = true;
+      _context.ActivationTokens.Remove(token);
+      await _context.SaveChangesAsync();
+      return user;
     }
 
     public async Task<bool> UserExists(string email)
