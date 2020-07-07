@@ -88,7 +88,7 @@ namespace Mxstrong.Data
 
     public async Task<bool> UserExists(string email)
     {
-      return await _context.Users.AnyAsync(x => x.Email == email);
+      return await _context.Users.AnyAsync(x => x.Email == email && x.Activated);
     }
   }
 }

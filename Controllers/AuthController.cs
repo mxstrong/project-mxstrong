@@ -67,7 +67,10 @@ namespace Mxstrong.Controllers
       {
         return Unauthorized();
       }
-        
+      if (!userFromRepo.Activated)
+      {
+        return BadRequest("You need to activate your account to proceed");
+      }
 
       // generate token
       var tokenHandler = new JwtSecurityTokenHandler();
