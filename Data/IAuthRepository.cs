@@ -10,5 +10,6 @@ namespace Mxstrong.Data
     Task<User> ActivateUser(string tokenId);
     Task<User> Login(string email, string pasword);
     Task<bool> UserExists(string email);
+    Task<User> FindUser(string id);
   }
 }

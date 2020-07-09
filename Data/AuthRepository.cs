@@ -90,5 +90,10 @@ namespace Mxstrong.Data
     {
       return await _context.Users.AnyAsync(x => x.Email == email && x.Activated);
     }
+
+    public async Task<User> FindUser(string id)
+    {
+      return await _context.Users.FindAsync(id);
+    }
   }
 }

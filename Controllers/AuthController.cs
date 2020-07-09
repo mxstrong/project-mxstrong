@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +12,7 @@ using Mxstrong.Data;
 using Mxstrong.Dtos;
 using Mxstrong.Models;
 using Mxstrong.Services;
+using SQLitePCL;
 
 namespace Mxstrong.Controllers
 {
@@ -110,6 +112,25 @@ namespace Mxstrong.Controllers
         return BadRequest("Email is already taken");
       }
       return Ok();
+    }
+    [HttpPost]
+    public async Task<IActionResult> Logout()
+    {
+      await HttpContext.SignOutAsync();
+      return NoContent();
+    }
+    [HttpGet]
+    public async Task<IActionResult> CurrentUser()
+    {
+      var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+      var user = await _repo.FindUser(userId);
+      var profile = new UserProfileDto
+      {
+        UserId = user.UserId,
+        FullName = user.FullName,
+        Email = user.Email
+      };
+      return Ok(profile);
     }
   }
 }
