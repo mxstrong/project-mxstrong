@@ -7,6 +7,10 @@ import {
   Button,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { AppState } from "../reducers";
+import { useCookies } from "react-cookie";
+import { logoutUser } from "../actions";
 
 const useStyles = makeStyles((theme: Theme) => ({
   header: {
@@ -30,7 +34,29 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function Header() {
   const classes = useStyles();
-
+  const user = useSelector((state: AppState) => state.auth.user);
+  const dispatch = useDispatch();
+  const [cookies, setCookie, removeCookie] = useCookies();
+  function handleLogout() {
+    removeCookie("user");
+    dispatch(logoutUser(user));
+  }
+  function renderLoginButton() {
+    if (user) {
+      return <Button onClick={handleLogout}>Logout</Button>;
+    } else {
+      return (
+        <Link
+          color="inherit"
+          className={classes.loginButton}
+          to="/login"
+          component={Button}
+        >
+          Login
+        </Link>
+      );
+    }
+  }
   return (
     <AppBar position="static" className={classes.header}>
       <Typography variant="h4" className={classes.title}>
@@ -43,14 +69,6 @@ export default function Header() {
         component={Button}
       >
         Home
-      </Link>
-      <Link
-        color="inherit"
-        className={classes.loginButton}
-        to="/login"
-        component={Button}
-      >
-        Login
       </Link>
     </AppBar>
   );

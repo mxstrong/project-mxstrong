@@ -3,10 +3,8 @@ import { UPDATE_USER } from "../actions/types";
 import { IUpdateUserAction } from "../helpers/types";
 
 export const initialState = {
-  auth: {
-    user: "",
-  },
-  form: {},
+  user: "",
+  userProfile: { id: "", name: "", email: "" },
 };
 
 export function authReducer(state = initialState, action: IUpdateUserAction) {

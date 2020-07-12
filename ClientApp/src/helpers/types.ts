@@ -13,3 +13,14 @@ export interface IUpdateUserAction {
   type: string;
   user: string;
 }
+
+export interface IUserProfile {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface IUpdateProfileAction {
+  type: string;
+  userProfile: IUserProfile;
+}
