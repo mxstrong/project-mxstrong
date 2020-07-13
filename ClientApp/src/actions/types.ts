@@ -1,2 +1,4 @@
 export const UPDATE_USER = "UPDATE_USER";
-export const UDPATE_PROFILE = "UPDATE_PROFILE";
+export const UPDATE_PROFILE = "UPDATE_PROFILE";
+export const UPDATE_POSTS = "UPDATE_POSTS";
+export const UPDATE_TOPICS = "UPDATE_TOPICS";

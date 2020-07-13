@@ -1,4 +1,9 @@
-import { UPDATE_USER } from "../actions/types";
+import {
+  UPDATE_USER,
+  UPDATE_POSTS,
+  UPDATE_TOPICS,
+  UPDATE_PROFILE,
+} from "../actions/types";
 
 export interface IIndexable {
   [key: string]: string;
@@ -10,7 +15,7 @@ export interface IUserLoginData extends IIndexable {
 }
 
 export interface IUpdateUserAction {
-  type: string;
+  type: typeof UPDATE_USER;
   user: string;
 }
 
@@ -21,6 +26,30 @@ export interface IUserProfile {
 }
 
 export interface IUpdateProfileAction {
-  type: string;
+  type: typeof UPDATE_PROFILE;
   userProfile: IUserProfile;
+}
+
+export type AuthActionTypes = IUpdateUserAction | IUpdateProfileAction;
+
+export interface IPost {
+  id: string;
+  title: string;
+  body: string;
+  topic: string;
+}
+
+export interface IUpdatePostsAction {
+  type: typeof UPDATE_POSTS;
+  posts: IPost[];
+}
+
+export interface ITopic {
+  id: string;
+  name: string;
+}
+
+export interface IUpdateTopicsAction {
+  type: typeof UPDATE_TOPICS;
+  topics: ITopic[];
 }
