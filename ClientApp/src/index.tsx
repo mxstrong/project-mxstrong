@@ -12,9 +12,11 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { CookiesProvider } from "react-cookie";
 
+const composeEnhancers = composeWithDevTools({ trace: true });
+
 const store = createStore(
   rootReducer,
-  composeWithDevTools(applyMiddleware(thunk))
+  composeEnhancers(applyMiddleware(thunk))
 );
 const theme = createMuiTheme();
 

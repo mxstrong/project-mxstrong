@@ -9,22 +9,24 @@ import Dashboard from "./Dashboard";
 import { useCookies } from "react-cookie";
 import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../reducers";
-import { loadUserProfile } from "../actions";
+import { loadUser, loadUserProfile, logoutUser } from "../actions";
 
 const App = () => {
   const [cookies, setCookie] = useCookies(["user"]);
   const userCookie = cookies["user"];
   const dispatch = useDispatch();
+  const user = useSelector((state: AppState) => state.auth.user);
+
   useEffect(() => {
-    if (userCookie) {
+    if (userCookie && !user) {
+      dispatch(loadUser(userCookie));
       dispatch(loadUserProfile(userCookie));
     }
-  }, [userCookie]);
+  });
 
-  const user = useSelector((state: AppState) => state.auth.user);
   useEffect(() => {
     if (user && !userCookie) {
-      setCookie("user", user);
+      setCookie("user", user, { path: "/" });
     }
   }, [user]);
 

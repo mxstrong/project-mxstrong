@@ -19,7 +19,7 @@ import { IPost } from "../helpers/types";
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
   },
 }));
@@ -38,7 +38,7 @@ export default function Dashboard() {
 
   return (
     <Paper className={classes.root}>
-      <Typography variant="h3">Dashboard</Typography>
+      <Typography variant="h3">Posts</Typography>
       {posts.map((post: IPost) => (
         <Card>
           <CardContent>

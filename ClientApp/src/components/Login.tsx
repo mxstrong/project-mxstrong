@@ -1,10 +1,12 @@
 import React from "react";
 import { makeStyles, Paper, Button, Typography } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { Field, reduxForm, InjectedFormProps } from "redux-form";
 import { renderTextField } from "../helpers/formHelpers";
 import { IIndexable, IUserLoginData } from "../helpers/types";
 import { loginUser } from "../actions";
+import { useSelector } from "react-redux";
+import { AppState } from "../reducers";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -58,6 +60,12 @@ type IErrors = IIndexable & {
 function LoginForm(props: InjectedFormProps<IUserLoginData, {}>) {
   const classes = useStyles();
   const { handleSubmit, pristine, submitting } = props;
+  const user = useSelector((state: AppState) => state.auth.user);
+
+  if (user) {
+    return <Redirect to="/" />;
+  }
+
   return (
     <Paper className={classes.paper}>
       <Typography className={classes.text} variant="h3">

@@ -1,10 +1,5 @@
-import { AppState } from ".";
 import { UPDATE_USER, UPDATE_PROFILE } from "../actions/types";
-import {
-  IUpdateUserAction,
-  IUpdateProfileAction,
-  AuthActionTypes,
-} from "../helpers/types";
+import { AuthActionTypes } from "../helpers/types";
 
 export const initialState = {
   user: "",

@@ -1,8 +1,8 @@
 import {
   UPDATE_USER,
-  UDPATE_PROFILE,
   UPDATE_POSTS,
   UPDATE_TOPICS,
+  UPDATE_PROFILE,
 } from "./types";
 import {
   IUserLoginData,
@@ -23,28 +23,28 @@ import {
   FETCH_TOPICS,
 } from "../constants/urls";
 
-function updateUser(user: string) {
+function updateUser(user: string): IUpdateUserAction {
   return {
     type: UPDATE_USER,
     user,
   };
 }
 
-function updateUserProfile(userProfile: IUserProfile) {
+function updateUserProfile(userProfile: IUserProfile): IUpdateProfileAction {
   return {
-    type: UDPATE_PROFILE,
+    type: UPDATE_PROFILE,
     userProfile,
   };
 }
 
-function updatePosts(posts: IPost[]) {
+function updatePosts(posts: IPost[]): IUpdatePostsAction {
   return {
     type: UPDATE_POSTS,
     posts,
   };
 }
 
-function updateTopics(topics: ITopic[]) {
+function updateTopics(topics: ITopic[]): IUpdateTopicsAction {
   return {
     type: UPDATE_TOPICS,
     topics,
@@ -70,6 +70,12 @@ export function loginUser(user: IUserLoginData) {
   };
 }
 
+export function loadUser(userToken: string) {
+  return function (dispatch: Dispatch<IUpdateUserAction>) {
+    dispatch(updateUser(userToken));
+  };
+}
+
 export function loadUserProfile(userToken: string) {
   return async function (dispatch: Dispatch<IUpdateProfileAction>) {
     const response = await fetch(CURRENT_USER_URL, {
@@ -86,21 +92,12 @@ export function loadUserProfile(userToken: string) {
   };
 }
 
-export function logoutUser(userToken: string) {
-  return async function (
+export function logoutUser() {
+  return function (
     dispatch: Dispatch<IUpdateUserAction | IUpdateProfileAction>
   ) {
-    const response = await fetch(LOGOUT_URL, {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + userToken,
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.ok) {
-      dispatch(updateUser(""));
-      dispatch(updateUserProfile({ id: "", name: "", email: "" }));
-    }
+    dispatch(updateUser(""));
+    dispatch(updateUserProfile({ id: "", name: "", email: "" }));
   };
 }
 
