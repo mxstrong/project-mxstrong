@@ -113,12 +113,6 @@ namespace Mxstrong.Controllers
       }
       return Ok();
     }
-    [HttpPost]
-    public async Task<IActionResult> Logout()
-    {
-      await HttpContext.SignOutAsync();
-      return NoContent();
-    }
     [HttpGet]
     public async Task<IActionResult> CurrentUser()
     {
