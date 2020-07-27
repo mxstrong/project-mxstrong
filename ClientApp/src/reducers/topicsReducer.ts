@@ -1,9 +1,7 @@
-import { IUpdatePostsAction, IUpdateTopicsAction } from "../helpers/types";
-import { UPDATE_POSTS, UPDATE_TOPICS } from "../actions/types";
+import { IUpdateTopicsAction, ITopic } from "../helpers/types";
+import { UPDATE_TOPICS } from "../actions/types";
 
-export const initialState = {
-  topics: {},
-};
+export const initialState: ITopic[] = [];
 
 export function topicsReducer(
   state = initialState,

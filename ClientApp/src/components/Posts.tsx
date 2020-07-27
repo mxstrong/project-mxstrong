@@ -7,37 +7,35 @@ import {
   Card,
   CardContent,
   CardActionArea,
-  Button,
   IconButton,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTopics, fetchPosts } from "../actions";
+import { fetchPosts } from "../actions";
 import { AppState } from "../reducers";
 import { IPost } from "../helpers/types";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  root: {
+  paper: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    alignItems: "center",
   },
 }));
 
-export default function Dashboard() {
+export default function Posts() {
   const classes = useStyles();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchTopics);
     dispatch(fetchPosts);
   });
 
-  // const topics = useSelector((state: AppState) => state.topics);
-  const posts = useSelector((state: AppState) => state.posts.posts);
+  const posts = useSelector((state: AppState) => state.posts);
 
   return (
-    <Paper className={classes.root}>
+    <Paper className={classes.paper}>
       <Typography variant="h3">Posts</Typography>
       {posts.map((post: IPost) => (
         <Card>
@@ -50,9 +48,9 @@ export default function Dashboard() {
       ))}
       <Card>
         <CardActionArea>
-          <IconButton>
+          <Link to="/posts/add" component={IconButton}>
             <AddIcon />
-          </IconButton>
+          </Link>
         </CardActionArea>
       </Card>
     </Paper>

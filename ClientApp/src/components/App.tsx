@@ -2,14 +2,15 @@ import React, { useEffect } from "react";
 import Auth from "./Auth";
 import Login from "./Login";
 import Register from "./Register";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import Activate from "./Activate";
 import Header from "./Header";
-import Dashboard from "./Dashboard";
 import { useCookies } from "react-cookie";
 import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../reducers";
 import { loadUser, loadUserProfile, logoutUser } from "../actions";
+import Posts from "./Posts";
+import AddPost from "./AddPost";
 
 const App = () => {
   const [cookies, setCookie] = useCookies(["user"]);
@@ -35,7 +36,13 @@ const App = () => {
       <Header />
       <Switch>
         <Route path="/" exact>
-          <Dashboard />
+          <Redirect to="/posts" />
+        </Route>
+        <Route path="/posts" exact>
+          <Posts />
+        </Route>
+        <Route path="/posts/add">
+          <AddPost />
         </Route>
         <Route path="/login">
           <Auth>

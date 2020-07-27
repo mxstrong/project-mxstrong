@@ -1,9 +1,7 @@
-import { IUpdatePostsAction } from "../helpers/types";
+import { IUpdatePostsAction, IPost } from "../helpers/types";
 import { UPDATE_POSTS } from "../actions/types";
 
-export const initialState = {
-  posts: [],
-};
+export const initialState: IPost[] = [];
 
 export function postsReducer(state = initialState, action: IUpdatePostsAction) {
   switch (action.type) {
