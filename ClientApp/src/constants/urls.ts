@@ -6,3 +6,5 @@ export const CURRENT_USER_URL = BASE_URL + "/api/auth/currentUser";
 export const LOGOUT_URL = BASE_URL + "/api/auth/logout";
 export const FETCH_POSTS = BASE_URL + "/api/posts";
 export const FETCH_TOPICS = BASE_URL + "/api/topics";
+export const ADD_POST = BASE_URL + "/api/posts";
+export const ADD_TOPIC = BASE_URL + "/api/topics";

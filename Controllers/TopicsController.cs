@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Mxstrong.Dtos;
 using Mxstrong.Models;
 
 namespace Mxstrong.Controllers
@@ -22,14 +23,18 @@ namespace Mxstrong.Controllers
 
         // GET: api/Topics
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Topic>>> GetTopics()
+        public async Task<ActionResult<List<TopicDto>>> GetTopics()
         {
-            return await _context.Topics.ToListAsync();
+            return await _context.Topics.Select(topic => new TopicDto()
+            {
+                TopicId = topic.TopicId,
+                Name = topic.Name
+            }).ToListAsync();
         }
 
         // GET: api/Topics/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Topic>> GetTopic(string id)
+        public async Task<ActionResult<TopicDto>> GetTopic(string id)
         {
             var topic = await _context.Topics.FindAsync(id);
 
@@ -38,7 +43,13 @@ namespace Mxstrong.Controllers
                 return NotFound();
             }
 
-            return topic;
+            var topicDto = new TopicDto()
+            {
+                TopicId = topic.TopicId,
+                Name = topic.Name
+            };
+
+            return Ok(topicDto);
         }
 
         // PUT: api/Topics/5
@@ -77,16 +88,35 @@ namespace Mxstrong.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Topic>> PostTopic(Topic topic)
+        public async Task<ActionResult<Topic>> PostTopic(AddTopicDto topic)
         {
-            _context.Topics.Add(topic);
+            var alreadyExists = _context.Topics.Any(t => t.Name == topic.Name);
+            if (alreadyExists)
+            {
+                return BadRequest("This topic already exists");
+            }
+
+            var newTopic = new Topic()
+            {
+                TopicId = Guid.NewGuid().ToString(),
+                Name = topic.Name,
+            };
+            
+            _context.Topics.Add(newTopic);
+
+            var topicDto = new TopicDto()
+            {
+                TopicId = newTopic.TopicId,
+                Name = newTopic.Name
+            };
+
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (TopicExists(topic.TopicId))
+                if (TopicExists(newTopic.TopicId))
                 {
                     return Conflict();
                 }
@@ -96,7 +126,7 @@ namespace Mxstrong.Controllers
                 }
             }
 
-            return CreatedAtAction("GetTopic", new { id = topic.TopicId }, topic);
+            return CreatedAtAction("GetTopic", topicDto);
         }
 
         // DELETE: api/Topics/5

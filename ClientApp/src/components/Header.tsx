@@ -35,12 +35,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function Header() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const user = useSelector((state: AppState) => state.auth.user);
   const [cookies, setCookie, removeCookie] = useCookies(["user"]);
-  const user = cookies["user"];
 
   function handleLogout() {
     removeCookie("user", { path: "/" });
-    dispatch(logoutUser);
+    dispatch(logoutUser());
   }
 
   function renderLoginButton() {

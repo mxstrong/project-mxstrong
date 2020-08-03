@@ -1,12 +1,18 @@
-import React, { useEffect } from "react";
+import React, {
+  useEffect,
+  FunctionComponent,
+  ComponentType,
+  useState,
+} from "react";
 import { Paper, makeStyles, Theme, Button, MenuItem } from "@material-ui/core";
 import { renderTextField } from "../helpers/formHelpers";
 import { Field, InjectedFormProps, reduxForm } from "redux-form";
-import { fetchTopics } from "../actions";
+import { fetchTopics, addNewPost } from "../actions";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../reducers";
-import { ITopic } from "../helpers/types";
-import { Link } from "react-router-dom";
+import { ITopic, IPostFormData, IIndexable } from "../helpers/types";
+import { Link, Redirect } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -29,29 +35,65 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-interface IPostFormData {
-  title: string;
-  topic: string;
-  body: string;
-}
+const validate = (values: IPostFormData) => {
+  const errors: IErrors = {};
+  const requiredFields: string[] = ["title", "body"];
 
-function AddPost(props: InjectedFormProps<{}, {}>) {
+  requiredFields.forEach((field) => {
+    if (!values[field]) {
+      errors[field] = "Required";
+    }
+  });
+
+  if (values.topic === "other" && !values["otherTopic"]) {
+    errors["otherTopic"] = "You must specify other topic";
+  }
+
+  return errors;
+};
+
+type IErrors = IIndexable & {
+  title?: string;
+  topic?: string;
+  otherTopic?: string;
+  body?: string;
+};
+
+function AddPost(props: InjectedFormProps<IPostFormData, {}>) {
   const classes = useStyles();
   const { handleSubmit, pristine, submitting } = props;
   const dispatch = useDispatch();
+  const user = useSelector((state: AppState) => state.auth.user);
+  const [cookies] = useCookies(["user"]);
+  const userCookie = cookies["user"];
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchTopics);
-  });
+    dispatch(fetchTopics());
+  }, []);
 
   const topics = useSelector((state: AppState) => state.topics);
   const topic = useSelector(
     (state: AppState) => state.form.PostForm?.values?.topic
   );
 
+  if (!user && !userCookie) {
+    return <Redirect to="/posts" />;
+  }
+
+  if (success) {
+    return <Redirect to="/posts" />;
+  }
+
   return (
     <Paper className={classes.paper}>
-      <form className={classes.form}>
+      <form
+        className={classes.form}
+        onSubmit={handleSubmit((values, dispatch) => {
+          dispatch(addNewPost(values));
+          setSuccess(true);
+        })}
+      >
         <Field
           className={classes.input}
           name="title"
@@ -119,4 +161,5 @@ function AddPost(props: InjectedFormProps<{}, {}>) {
 
 export default reduxForm({
   form: "PostForm",
+  validate,
 })(AddPost);

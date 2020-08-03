@@ -2,3 +2,5 @@ export const UPDATE_USER = "UPDATE_USER";
 export const UPDATE_PROFILE = "UPDATE_PROFILE";
 export const UPDATE_POSTS = "UPDATE_POSTS";
 export const UPDATE_TOPICS = "UPDATE_TOPICS";
+export const UPDATE_POST = "UPDATE_POST";
+export const UPDATE_TOPIC = "UPDATE_TOPIC";

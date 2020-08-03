@@ -3,6 +3,8 @@ import {
   UPDATE_POSTS,
   UPDATE_TOPICS,
   UPDATE_PROFILE,
+  UPDATE_POST,
+  UPDATE_TOPIC,
 } from "./types";
 import {
   IUserLoginData,
@@ -13,41 +15,59 @@ import {
   IPost,
   ITopic,
   IUpdateTopicsAction,
+  IPostFormData,
+  IAddPostAction,
+  IAddTopicAction,
 } from "../helpers/types";
 import { Dispatch } from "redux";
 import {
   LOGIN_URL,
   CURRENT_USER_URL,
-  LOGOUT_URL,
   FETCH_POSTS,
   FETCH_TOPICS,
+  ADD_POST,
+  ADD_TOPIC,
 } from "../constants/urls";
 
 function updateUser(user: string): IUpdateUserAction {
   return {
     type: UPDATE_USER,
-    user,
+    payload: user,
   };
 }
 
 function updateUserProfile(userProfile: IUserProfile): IUpdateProfileAction {
   return {
     type: UPDATE_PROFILE,
-    userProfile,
+    payload: userProfile,
   };
 }
 
 function updatePosts(posts: IPost[]): IUpdatePostsAction {
   return {
     type: UPDATE_POSTS,
-    posts,
+    payload: posts,
   };
 }
 
 function updateTopics(topics: ITopic[]): IUpdateTopicsAction {
   return {
     type: UPDATE_TOPICS,
-    topics,
+    payload: topics,
+  };
+}
+
+function addPost(post: IPost): IAddPostAction {
+  return {
+    type: UPDATE_POST,
+    payload: post,
+  };
+}
+
+function addTopic(topic: ITopic): IAddTopicAction {
+  return {
+    type: UPDATE_TOPIC,
+    payload: topic,
   };
 }
 
@@ -97,7 +117,7 @@ export function logoutUser() {
     dispatch: Dispatch<IUpdateUserAction | IUpdateProfileAction>
   ) {
     dispatch(updateUser(""));
-    dispatch(updateUserProfile({ id: "", name: "", email: "" }));
+    dispatch(updateUserProfile({ userId: "", fullName: "", email: "" }));
   };
 }
 
@@ -124,5 +144,41 @@ export function fetchTopics() {
     });
     const topics = await response.json();
     dispatch(updateTopics(topics));
+  };
+}
+
+export function addNewPost(post: IPostFormData) {
+  return async function (dispatch: Dispatch<IAddPostAction | IAddTopicAction>) {
+    if (post.topic === "other" && post.otherTopic) {
+      const response = await fetch(ADD_TOPIC, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: post.otherTopic,
+        }),
+      });
+      if (response.ok) {
+        const topic = await response.json();
+        dispatch(addTopic(topic));
+      }
+    }
+
+    const newPost = {
+      title: post.title,
+      topic: post.topic === "other" ? post.otherTopic : post.topic,
+      body: post.body,
+    };
+
+    const response = await fetch(ADD_POST, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newPost),
+    });
+    const data = await response.json();
+    dispatch(addPost(data));
   };
 }

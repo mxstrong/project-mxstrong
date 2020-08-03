@@ -3,6 +3,7 @@ import { combineReducers } from "redux";
 import { authReducer } from "./authReducer";
 import { postsReducer } from "./postsReducer";
 import { topicsReducer } from "./topicsReducer";
+
 export const rootReducer = combineReducers({
   auth: authReducer,
   form: formReducer,

@@ -1,5 +1,4 @@
-﻿
-namespace Mxstrong.Dtos
+﻿namespace Mxstrong.Dtos
 {
   public class LoginDto
   {

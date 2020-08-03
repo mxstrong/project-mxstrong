@@ -1,17 +1,14 @@
-import { IUpdateTopicsAction, ITopic } from "../helpers/types";
-import { UPDATE_TOPICS } from "../actions/types";
+import { ITopic, TopicActionTypes } from "../helpers/types";
+import { UPDATE_TOPICS, UPDATE_TOPIC } from "../actions/types";
 
 export const initialState: ITopic[] = [];
 
-export function topicsReducer(
-  state = initialState,
-  action: IUpdateTopicsAction
-) {
+export function topicsReducer(state = initialState, action: TopicActionTypes) {
   switch (action.type) {
     case UPDATE_TOPICS:
-      return Object.assign({}, state, {
-        topics: action.topics,
-      });
+      return [...action.payload];
+    case UPDATE_TOPIC:
+      return [...state, action.payload];
     default:
       return state;
   }
