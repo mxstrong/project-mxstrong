@@ -25,10 +25,13 @@ export interface IUpdateUserAction {
   payload: string;
 }
 
+export type IRole = "User" | "Admin" | "";
+
 export interface IUserProfile {
   userId: string;
   fullName: string;
   email: string;
+  role: IRole;
 }
 
 export interface IUpdateProfileAction {
@@ -44,6 +47,7 @@ export interface IPost {
   body: string;
   topic: string;
   userId: string;
+  author: string;
 }
 
 export interface IUpdatePostsAction {

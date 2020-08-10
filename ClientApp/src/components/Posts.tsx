@@ -22,6 +22,7 @@ import { AppState } from "../reducers";
 import { IPost } from "../helpers/types";
 import { Link, useHistory } from "react-router-dom";
 import { DELETE_POST_URL } from "../constants/urls";
+import { role } from "../constants/roles";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -86,6 +87,7 @@ export default function Posts() {
         <Card className={classes.card} key={post.postId}>
           <CardHeader
             action={
+              userProfile.role === role.admin ||
               userProfile.userId == post.userId ? (
                 <React.Fragment>
                   <IconButton aria-label="settings" onClick={handleClick}>
@@ -109,7 +111,7 @@ export default function Posts() {
               )
             }
             title={post.title}
-            subheader={post.topic}
+            subheader={post.author}
           />
           <CardContent>
             <Typography variant="body2">{post.body}</Typography>

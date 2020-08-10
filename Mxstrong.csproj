@@ -38,6 +38,14 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200310164850_InitialCreate.cs" />
     <Compile Remove="Migrations\20200310164850_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200810141656_AddUserRoles.cs" />
+    <Compile Remove="Migrations\20200810141656_AddUserRoles.Designer.cs" />
+    <Compile Remove="Migrations\20200810143031_AddUserRoles.cs" />
+    <Compile Remove="Migrations\20200810143031_AddUserRoles.Designer.cs" />
+    <Compile Remove="Migrations\20200810143317_AddUserRoles.cs" />
+    <Compile Remove="Migrations\20200810143317_AddUserRoles.Designer.cs" />
+    <Compile Remove="Migrations\20200810143441_AddUserRoles.cs" />
+    <Compile Remove="Migrations\20200810143441_AddUserRoles.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

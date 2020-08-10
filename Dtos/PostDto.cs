@@ -7,5 +7,6 @@ namespace Mxstrong.Dtos
     public string Body { get; set; }
     public string Topic { get; set; }
     public string UserId { get; set; }
+    public string Author { get; set; }
   }
 }

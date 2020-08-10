@@ -100,6 +100,7 @@ function EditPost(props: InjectedFormProps<IPostFormData, {}>) {
             otherTopic: values.otherTopic,
             body: values.body,
             userId: post ? post.userId : "",
+            author: post ? post.author : "",
           };
           dispatch(editPost(postData, userToken));
           setSuccess(true);

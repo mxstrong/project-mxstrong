@@ -1,16 +1,16 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Mxstrong.Data;
 using Mxstrong.Models;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Mxstrong.Services;
+using System.Text;
 
 namespace Mxstrong
 {
@@ -34,7 +34,8 @@ namespace Mxstrong
       services.AddTransient<IEmailSender, EmailSender>();
 
       var key = Encoding.ASCII.GetBytes(Configuration["JWTSecret"]);
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+      {
         options.TokenValidationParameters = new TokenValidationParameters
         {
           ValidateIssuerSigningKey = true,
@@ -83,12 +84,12 @@ namespace Mxstrong
 
       app.UseSpa(spa =>
       {
-       spa.Options.SourcePath = "ClientApp";
+        spa.Options.SourcePath = "ClientApp";
 
-       if (env.IsDevelopment())
-       {
-         spa.UseReactDevelopmentServer(npmScript: "start");
-       }
+        if (env.IsDevelopment())
+        {
+          spa.UseReactDevelopmentServer(npmScript: "start");
+        }
       });
     }
   }

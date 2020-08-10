@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Mxstrong.Dtos;
+using Mxstrong.Models;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Mxstrong.Models;
 
 namespace Mxstrong.Data
 {
@@ -35,8 +37,8 @@ namespace Mxstrong.Data
       {
         var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
         if (!computedHash.SequenceEqual(passwordHash))
-        { 
-          return false; 
+        {
+          return false;
         }
       }
       return true;
@@ -94,6 +96,25 @@ namespace Mxstrong.Data
     public async Task<User> FindUser(string id)
     {
       return await _context.Users.FindAsync(id);
+    }
+
+    public async Task<List<User>> GetUsers()
+    {
+      return await _context.Users.ToListAsync();
+    }
+
+    public async Task<User> UpdateUser(string id, UserProfileDto userProfile)
+    {
+      if (id != userProfile.UserId)
+      {
+        return null;
+      }
+      var user = await _context.Users.FirstOrDefaultAsync(user => user.UserId == id);
+      user.Email = userProfile.Email;
+      user.FullName = userProfile.FullName;
+      user.Role = userProfile.Role;
+      await _context.SaveChangesAsync();
+      return user;
     }
   }
 }

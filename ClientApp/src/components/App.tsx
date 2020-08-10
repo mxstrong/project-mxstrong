@@ -30,7 +30,10 @@ const App = () => {
 
   useEffect(() => {
     if (user && !userCookie) {
-      setCookie("user", user, { path: "/" });
+      setCookie("user", user, {
+        path: "/",
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      });
     }
   }, [user]);
 

@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using Mxstrong.Models;
 using SendGrid;
-using Mxstrong.Models;
+using System.Threading.Tasks;
 
 namespace Mxstrong.Services
 {

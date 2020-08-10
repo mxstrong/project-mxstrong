@@ -1,10 +1,10 @@
 import { UPDATE_USER, UPDATE_PROFILE } from "../actions/types";
-import { AuthActionTypes } from "../helpers/types";
+import { AuthActionTypes, IRole } from "../helpers/types";
 import { Reducer } from "redux";
 
 export const initialState = {
   user: "",
-  userProfile: { userId: "", fullName: "", email: "" },
+  userProfile: { userId: "", fullName: "", email: "", role: "" },
 };
 
 export const authReducer: Reducer<typeof initialState, AuthActionTypes> = (

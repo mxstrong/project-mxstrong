@@ -129,7 +129,9 @@ export function logoutUser() {
     dispatch: Dispatch<IUpdateUserAction | IUpdateProfileAction>
   ) {
     dispatch(updateUser(""));
-    dispatch(updateUserProfile({ userId: "", fullName: "", email: "" }));
+    dispatch(
+      updateUserProfile({ userId: "", fullName: "", email: "", role: "" })
+    );
   };
 }
 
@@ -160,7 +162,9 @@ export function fetchTopics(): AppThunk {
 }
 
 export function addNewPost(post: IPostFormData, userToken: string): AppThunk {
-  return async function (dispatch: Dispatch<IAddPostAction | IAddTopicAction>) {
+  return async function (
+    dispatch: Dispatch<IUpdatePostsAction | IAddTopicAction>
+  ) {
     if (post.topic === "other" && post.otherTopic) {
       const response = await fetch(ADD_TOPIC_URL, {
         method: "POST",
@@ -192,8 +196,16 @@ export function addNewPost(post: IPostFormData, userToken: string): AppThunk {
       },
       body: JSON.stringify(newPost),
     });
-    const data = await response.json();
-    dispatch(addPost(data));
+    if (response.ok) {
+      const response = await fetch(FETCH_POSTS_URL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const posts: IPost[] = await response.json();
+      dispatch(updatePosts(posts));
+    }
   };
 }
 

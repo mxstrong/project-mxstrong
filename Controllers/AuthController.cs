@@ -1,10 +1,4 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -12,7 +6,13 @@ using Mxstrong.Data;
 using Mxstrong.Dtos;
 using Mxstrong.Models;
 using Mxstrong.Services;
-using SQLitePCL;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Mxstrong.Controllers
 {
@@ -33,7 +33,7 @@ namespace Mxstrong.Controllers
 
     [HttpPost]
     public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto)
-    { 
+    {
       if (!ModelState.IsValid)
       {
         return BadRequest(ModelState);
@@ -43,13 +43,14 @@ namespace Mxstrong.Controllers
       {
         return BadRequest("Email is already taken");
       }
-        
+
 
       var userToCreate = new User
       {
         Email = registerUserDto.Email,
         FullName = registerUserDto.FullName,
-        Activated = false
+        Activated = false,
+        Role = Role.User,
       };
 
       var createdUser = await _repo.Register(userToCreate, registerUserDto.Password);
@@ -81,7 +82,8 @@ namespace Mxstrong.Controllers
       {
         Subject = new ClaimsIdentity(new Claim[]{
           new Claim(ClaimTypes.NameIdentifier, userFromRepo.UserId),
-          new Claim(ClaimTypes.Email, userFromRepo.Email)
+          new Claim(ClaimTypes.Email, userFromRepo.Email),
+          new Claim(ClaimTypes.Role, userFromRepo.Role)
         }),
         Expires = DateTime.Now.AddDays(1),
         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
@@ -113,6 +115,7 @@ namespace Mxstrong.Controllers
       }
       return Ok();
     }
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> CurrentUser()
     {
@@ -122,9 +125,33 @@ namespace Mxstrong.Controllers
       {
         UserId = user.UserId,
         FullName = user.FullName,
-        Email = user.Email
+        Email = user.Email,
+        Role = user.Role,
       };
       return Ok(profile);
+    }
+    [Authorize(Roles = Role.Admin)]
+    public async Task<List<UserProfileDto>> Users()
+    {
+      var users = await _repo.GetUsers();
+      return users.Select(user => new UserProfileDto
+      {
+        UserId = user.UserId,
+        Email = user.Email,
+        FullName = user.FullName,
+        Role = user.Role,
+      }).ToList();
+    }
+    [Authorize(Roles = Role.Admin)]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUser(string id, UserProfileDto user)
+    {
+      var updatedUser = await _repo.UpdateUser(id, user);
+      if (updatedUser == null)
+      {
+        return BadRequest();
+      }
+      return NoContent();
     }
   }
 }

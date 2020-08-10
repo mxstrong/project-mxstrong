@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Configuration;
+using Mxstrong.Models;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using Mxstrong.Models;
-using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace Mxstrong.Services
 {
