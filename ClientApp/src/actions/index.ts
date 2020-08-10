@@ -5,6 +5,7 @@ import {
   UPDATE_PROFILE,
   UPDATE_POST,
   UPDATE_TOPIC,
+  SET_CURRENT_POST,
 } from "./types";
 import {
   IUserLoginData,
@@ -18,15 +19,19 @@ import {
   IPostFormData,
   IAddPostAction,
   IAddTopicAction,
+  IEditPostData,
+  ISetCurrentPostAction,
+  AppThunk,
 } from "../helpers/types";
-import { Dispatch } from "redux";
+import { Dispatch, Action } from "redux";
 import {
   LOGIN_URL,
   CURRENT_USER_URL,
-  FETCH_POSTS,
-  FETCH_TOPICS,
-  ADD_POST,
-  ADD_TOPIC,
+  FETCH_POSTS_URL,
+  FETCH_TOPICS_URL,
+  ADD_POST_URL,
+  ADD_TOPIC_URL,
+  EDIT_POST_URL,
 } from "../constants/urls";
 
 function updateUser(user: string): IUpdateUserAction {
@@ -71,7 +76,14 @@ function addTopic(topic: ITopic): IAddTopicAction {
   };
 }
 
-export function loginUser(user: IUserLoginData) {
+export function setCurrentPost(post: IPost): ISetCurrentPostAction {
+  return {
+    type: SET_CURRENT_POST,
+    payload: post,
+  };
+}
+
+export function loginUser(user: IUserLoginData): AppThunk {
   return async function (dispatch: Dispatch<IUpdateUserAction>) {
     const response = await fetch(LOGIN_URL, {
       method: "POST",
@@ -121,9 +133,9 @@ export function logoutUser() {
   };
 }
 
-export function fetchPosts() {
+export function fetchPosts(): AppThunk {
   return async function (dispatch: Dispatch<IUpdatePostsAction>) {
-    const response = await fetch(FETCH_POSTS, {
+    const response = await fetch(FETCH_POSTS_URL, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -134,9 +146,9 @@ export function fetchPosts() {
   };
 }
 
-export function fetchTopics() {
+export function fetchTopics(): AppThunk {
   return async function (dispatch: Dispatch<IUpdateTopicsAction>) {
-    const response = await fetch(FETCH_TOPICS, {
+    const response = await fetch(FETCH_TOPICS_URL, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -147,12 +159,13 @@ export function fetchTopics() {
   };
 }
 
-export function addNewPost(post: IPostFormData) {
+export function addNewPost(post: IPostFormData, userToken: string): AppThunk {
   return async function (dispatch: Dispatch<IAddPostAction | IAddTopicAction>) {
     if (post.topic === "other" && post.otherTopic) {
-      const response = await fetch(ADD_TOPIC, {
+      const response = await fetch(ADD_TOPIC_URL, {
         method: "POST",
         headers: {
+          Authorization: "Bearer " + userToken,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -171,14 +184,65 @@ export function addNewPost(post: IPostFormData) {
       body: post.body,
     };
 
-    const response = await fetch(ADD_POST, {
+    const response = await fetch(ADD_POST_URL, {
       method: "POST",
       headers: {
+        Authorization: "Bearer " + userToken,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newPost),
     });
     const data = await response.json();
     dispatch(addPost(data));
+  };
+}
+
+export function editPost(post: IEditPostData, userToken: string): AppThunk {
+  return async function (
+    dispatch: Dispatch<IAddTopicAction | IUpdatePostsAction>
+  ) {
+    if (post.topic === "other" && post.otherTopic) {
+      const response = await fetch(ADD_TOPIC_URL, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + userToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: post.otherTopic,
+        }),
+      });
+      if (response.ok) {
+        const topic = await response.json();
+        dispatch(addTopic(topic));
+      }
+    }
+
+    const updatedPost = {
+      postId: post.postId,
+      title: post.title,
+      topic: post.topic === "other" ? post.otherTopic : post.topic,
+      body: post.body,
+      userId: post.userId,
+    };
+
+    const response = await fetch(EDIT_POST_URL + "/" + post.postId, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedPost),
+    });
+
+    if (response.ok) {
+      const response = await fetch(FETCH_POSTS_URL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const posts: IPost[] = await response.json();
+      dispatch(updatePosts(posts));
+    }
   };
 }

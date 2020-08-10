@@ -32,6 +32,7 @@ namespace Mxstrong.Controllers
                 Title = post.Title,
                 Body = post.Body,
                 Topic = post.Topic.Name,
+                UserId = post.UserId,
             }).ToListAsync();
         }
 
@@ -52,6 +53,7 @@ namespace Mxstrong.Controllers
                 Title = post.Title,
                 Body = post.Body,
                 Topic = post.Topic.Name,
+                UserId = post.UserId,
             };
 
             return postDto;
@@ -61,14 +63,19 @@ namespace Mxstrong.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPost(string id, Post post)
+        public async Task<IActionResult> PutPost(string id, EditPostDto updatedPost)
         {
-            if (id != post.PostId)
+            if (id != updatedPost.PostId)
             {
                 return BadRequest();
             }
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var post = await _context.Posts.FindAsync(id);
 
-            _context.Entry(post).State = EntityState.Modified;
+            var topic = await _context.Topics.FirstAsync(topic => topic.Name == updatedPost.Topic);
+            post.Title = updatedPost.Title;
+            post.TopicId = topic.TopicId;
+            post.Body = updatedPost.Body;
 
             try
             {
@@ -129,6 +136,7 @@ namespace Mxstrong.Controllers
                 Title = newPost.Title,
                 Body = newPost.Body,
                 Topic = newPost.Topic.Name,
+                UserId = newPost.UserId,
             };
 
             return CreatedAtAction("GetPost", postDto);

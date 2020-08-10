@@ -1,17 +1,17 @@
-import React, {
-  useEffect,
-  FunctionComponent,
-  ComponentType,
-  useState,
-} from "react";
-import { Paper, makeStyles, Theme, Button, MenuItem } from "@material-ui/core";
-import { renderTextField } from "../helpers/formHelpers";
+import React, { useEffect, useState } from "react";
+import { Paper, MenuItem, Button, makeStyles, Theme } from "@material-ui/core";
+import { addNewPost, editPost, fetchTopics, fetchPosts } from "../actions";
 import { Field, InjectedFormProps, reduxForm } from "redux-form";
-import { fetchTopics, addNewPost } from "../actions";
+import { renderTextField } from "../helpers/formHelpers";
+import {
+  ITopic,
+  IEditPostData,
+  IPostFormData,
+  IIndexable,
+} from "../helpers/types";
 import { useDispatch, useSelector } from "react-redux";
+import { Redirect, Link } from "react-router-dom";
 import { AppState } from "../reducers";
-import { ITopic, IPostFormData, IIndexable } from "../helpers/types";
-import { Link, Redirect } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -59,7 +59,7 @@ type IErrors = IIndexable & {
   body?: string;
 };
 
-function AddPost(props: InjectedFormProps<IPostFormData, {}>) {
+function EditPost(props: InjectedFormProps<IPostFormData, {}>) {
   const classes = useStyles();
   const { handleSubmit, pristine, submitting } = props;
   const dispatch = useDispatch();
@@ -72,12 +72,15 @@ function AddPost(props: InjectedFormProps<IPostFormData, {}>) {
     dispatch(fetchTopics());
   }, []);
 
+  const userToken = useSelector((state: AppState) => state.auth.user);
+  const post = useSelector((state: AppState) => state.posts.currentPost);
+
   const topics = useSelector((state: AppState) => state.topics);
   const topic = useSelector(
-    (state: AppState) => state.form.AddPostForm?.values?.topic
+    (state: AppState) => state.form.EditPostForm?.values?.topic
   );
 
-  if (!user && !userCookie) {
+  if ((!user && !userCookie) || !post) {
     return <Redirect to="/posts" />;
   }
 
@@ -90,7 +93,15 @@ function AddPost(props: InjectedFormProps<IPostFormData, {}>) {
       <form
         className={classes.form}
         onSubmit={handleSubmit((values, dispatch) => {
-          dispatch(addNewPost(values, user));
+          const postData: IEditPostData = {
+            postId: post ? post.postId : "",
+            title: values.title,
+            topic: values.topic,
+            otherTopic: values.otherTopic,
+            body: values.body,
+            userId: post ? post.userId : "",
+          };
+          dispatch(editPost(postData, userToken));
           setSuccess(true);
         })}
       >
@@ -160,6 +171,6 @@ function AddPost(props: InjectedFormProps<IPostFormData, {}>) {
 }
 
 export default reduxForm({
-  form: "AddPostForm",
+  form: "EditPostForm",
   validate,
-})(AddPost);
+})(EditPost);

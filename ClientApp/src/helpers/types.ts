@@ -5,7 +5,11 @@ import {
   UPDATE_PROFILE,
   UPDATE_POST,
   UPDATE_TOPIC,
+  SET_CURRENT_POST,
 } from "../actions/types";
+import { ThunkAction } from "redux-thunk";
+import { AppState } from "../reducers";
+import { Action } from "redux";
 
 export interface IIndexable {
   [key: string]: string;
@@ -39,6 +43,7 @@ export interface IPost {
   title: string;
   body: string;
   topic: string;
+  userId: string;
 }
 
 export interface IUpdatePostsAction {
@@ -63,6 +68,11 @@ export interface IPostFormData extends IIndexable {
   body: string;
 }
 
+export interface IEditPostData extends IPost {
+  otherTopic: string;
+  userId: string;
+}
+
 export interface IAddPostAction {
   type: typeof UPDATE_POST;
   payload: IPost;
@@ -73,5 +83,25 @@ export interface IAddTopicAction {
   payload: ITopic;
 }
 
-export type PostActionTypes = IUpdatePostsAction | IAddPostAction;
+export type PostActionTypes =
+  | IUpdatePostsAction
+  | IAddPostAction
+  | ISetCurrentPostAction;
 export type TopicActionTypes = IUpdateTopicsAction | IAddTopicAction;
+
+export interface ISetCurrentPostAction {
+  type: typeof SET_CURRENT_POST;
+  payload: IPost;
+}
+
+export interface IPostsReducer {
+  posts: IPost[];
+  currentPost: IPost | null;
+}
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  AppState,
+  unknown,
+  Action<string>
+>;

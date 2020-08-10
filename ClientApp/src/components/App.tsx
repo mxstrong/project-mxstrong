@@ -11,12 +11,15 @@ import { AppState } from "../reducers";
 import { loadUser, loadUserProfile, logoutUser } from "../actions";
 import Posts from "./Posts";
 import AddPost from "./AddPost";
+import EditPost from "./EditPost";
+import InitialValues from "./InitialValues";
 
 const App = () => {
   const [cookies, setCookie] = useCookies(["user"]);
   const userCookie = cookies["user"];
   const dispatch = useDispatch();
   const user = useSelector((state: AppState) => state.auth.user);
+  const userProfile = useSelector((state: AppState) => state.auth.userProfile);
 
   useEffect(() => {
     if (userCookie && !user) {
@@ -31,6 +34,12 @@ const App = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (user && !userProfile) {
+      dispatch(loadUserProfile(user));
+    }
+  });
+
   return (
     <React.Fragment>
       <Header />
@@ -43,6 +52,9 @@ const App = () => {
         </Route>
         <Route path="/posts/add">
           <AddPost />
+        </Route>
+        <Route path="/posts/edit">
+          <InitialValues />
         </Route>
         <Route path="/login">
           <Auth>
