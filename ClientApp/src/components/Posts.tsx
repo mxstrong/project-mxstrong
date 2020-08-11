@@ -10,14 +10,13 @@ import {
   IconButton,
   CardHeader,
   Fab,
-  Popover,
   Menu,
   MenuItem,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts, setCurrentPost } from "../actions";
+import { fetchPosts, fetchCurrentPost } from "../actions";
 import { AppState } from "../reducers";
 import { IPost } from "../helpers/types";
 import { Link, useHistory } from "react-router-dom";
@@ -36,6 +35,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   menu: {
     boxShadow: "none",
+  },
+  link: {
+    textDecoration: "none",
   },
 }));
 
@@ -75,7 +77,7 @@ export default function Posts() {
   const history = useHistory();
 
   function handleEdit(post: IPost) {
-    dispatch(setCurrentPost(post));
+    dispatch(fetchCurrentPost(post.postId));
     history.push("/posts/edit");
     handleClose();
   }
@@ -84,41 +86,43 @@ export default function Posts() {
     <Paper className={classes.paper}>
       <Typography variant="h3">Posts</Typography>
       {posts.map((post: IPost) => (
-        <Card className={classes.card} key={post.postId}>
-          <CardHeader
-            action={
-              userProfile.role === role.admin ||
-              userProfile.userId == post.userId ? (
-                <React.Fragment>
-                  <IconButton aria-label="settings" onClick={handleClick}>
-                    <MoreVertIcon />
-                  </IconButton>
-                  <Menu
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                    className={classes.menu}
-                  >
-                    <MenuItem onClick={() => handleEdit(post)}>Edit</MenuItem>
-                    <MenuItem onClick={() => handleDelete(post.postId)}>
-                      Delete
-                    </MenuItem>
-                  </Menu>
-                </React.Fragment>
-              ) : (
-                ""
-              )
-            }
-            title={post.title}
-            subheader={`By ${post.author} 
+        <Link to={"/post?id=" + post.postId} className={classes.link}>
+          <Card className={classes.card} key={post.postId}>
+            <CardHeader
+              action={
+                userProfile.role === role.admin ||
+                userProfile.userId == post.userId ? (
+                  <React.Fragment>
+                    <IconButton aria-label="settings" onClick={handleClick}>
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      anchorEl={anchorEl}
+                      keepMounted
+                      open={Boolean(anchorEl)}
+                      onClose={handleClose}
+                      className={classes.menu}
+                    >
+                      <MenuItem onClick={() => handleEdit(post)}>Edit</MenuItem>
+                      <MenuItem onClick={() => handleDelete(post.postId)}>
+                        Delete
+                      </MenuItem>
+                    </Menu>
+                  </React.Fragment>
+                ) : (
+                  ""
+                )
+              }
+              title={post.title}
+              subheader={`By ${post.author} 
               ${post.topic}  
               ${post.createdAt}`}
-          />
-          <CardContent>
-            <Typography variant="body2">{post.body}</Typography>
-          </CardContent>
-        </Card>
+            />
+            <CardContent>
+              <Typography variant="body2">{post.body}...</Typography>
+            </CardContent>
+          </Card>
+        </Link>
       ))}
       <Card>
         <CardActionArea>

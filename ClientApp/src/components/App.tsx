@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Auth from "./Auth";
 import Login from "./Login";
 import Register from "./Register";
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Route, Switch, Redirect, useLocation } from "react-router-dom";
 import Activate from "./Activate";
 import Header from "./Header";
 import { useCookies } from "react-cookie";
@@ -11,8 +11,8 @@ import { AppState } from "../reducers";
 import { loadUser, loadUserProfile, logoutUser } from "../actions";
 import Posts from "./Posts";
 import AddPost from "./AddPost";
-import EditPost from "./EditPost";
 import InitialValues from "./InitialValues";
+import ViewPost from "./ViewPost";
 
 const App = () => {
   const [cookies, setCookie] = useCookies(["user"]);
@@ -43,6 +43,12 @@ const App = () => {
     }
   });
 
+  function useQuery() {
+    return new URLSearchParams(useLocation().search);
+  }
+
+  let query = useQuery();
+
   return (
     <React.Fragment>
       <Header />
@@ -52,6 +58,9 @@ const App = () => {
         </Route>
         <Route path="/posts" exact>
           <Posts />
+        </Route>
+        <Route path="/post">
+          <ViewPost postId={query.get("id")} />
         </Route>
         <Route path="/posts/add">
           <AddPost />

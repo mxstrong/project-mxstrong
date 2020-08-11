@@ -33,7 +33,7 @@ namespace Mxstrong.Controllers
       {
         PostId = post.PostId,
         Title = post.Title,
-        Body = post.Body,
+        Body = new string(post.Body.Take(100).ToArray()),
         Topic = post.Topic.Name,
         UserId = post.UserId,
         Author = post.User.FullName,
@@ -46,14 +46,7 @@ namespace Mxstrong.Controllers
     [HttpGet("{id}")]
     public async Task<ActionResult<PostDto>> GetPost(string id)
     {
-      var post = await _context.Posts.FindAsync(id);
-
-      if (post == null)
-      {
-        return NotFound();
-      }
-
-      var postDto = new PostDto()
+      var postDto = await _context.Posts.Select(post => new PostDto()
       {
         PostId = post.PostId,
         Title = post.Title,
@@ -62,9 +55,14 @@ namespace Mxstrong.Controllers
         UserId = post.UserId,
         Author = post.User.FullName,
         CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd"),
-      };
+      }).SingleOrDefaultAsync(post => post.PostId == id);
 
-      return postDto;
+      if (postDto == null)
+      {
+        return NotFound();
+      }
+
+      return Ok(postDto);
     }
 
     // PUT: api/Posts/5

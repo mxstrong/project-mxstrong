@@ -148,6 +148,19 @@ export function fetchPosts(): AppThunk {
   };
 }
 
+export function fetchCurrentPost(postId: string): AppThunk {
+  return async function (dispatch: Dispatch<ISetCurrentPostAction>) {
+    const response = await fetch(FETCH_POSTS_URL + "/" + postId, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const post: IPost = await response.json();
+    dispatch(setCurrentPost(post));
+  };
+}
+
 export function fetchTopics(): AppThunk {
   return async function (dispatch: Dispatch<IUpdateTopicsAction>) {
     const response = await fetch(FETCH_TOPICS_URL, {
