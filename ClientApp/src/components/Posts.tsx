@@ -111,7 +111,9 @@ export default function Posts() {
               )
             }
             title={post.title}
-            subheader={post.author}
+            subheader={`By ${post.author} 
+              ${post.topic}  
+              ${post.createdAt}`}
           />
           <CardContent>
             <Typography variant="body2">{post.body}</Typography>

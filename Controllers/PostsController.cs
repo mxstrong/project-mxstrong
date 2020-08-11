@@ -37,6 +37,7 @@ namespace Mxstrong.Controllers
         Topic = post.Topic.Name,
         UserId = post.UserId,
         Author = post.User.FullName,
+        CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd"),
       }).ToListAsync();
     }
 
@@ -60,6 +61,7 @@ namespace Mxstrong.Controllers
         Topic = post.Topic.Name,
         UserId = post.UserId,
         Author = post.User.FullName,
+        CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd"),
       };
 
       return postDto;
@@ -121,7 +123,8 @@ namespace Mxstrong.Controllers
         Title = post.Title,
         Body = post.Body,
         TopicId = topic.TopicId,
-        UserId = userId
+        UserId = userId,
+        CreatedAt = DateTime.Now,
       };
       _context.Posts.Add(newPost);
 
@@ -149,6 +152,7 @@ namespace Mxstrong.Controllers
         Topic = newPost.Topic.Name,
         UserId = newPost.UserId,
         Author = newPost.User.FullName,
+        CreatedAt = newPost.CreatedAt.ToString("yyyy-MM-dd"),
       };
 
       return CreatedAtAction("GetPost", postDto);

@@ -48,6 +48,7 @@ export interface IPost {
   topic: string;
   userId: string;
   author: string;
+  createdAt: string;
 }
 
 export interface IUpdatePostsAction {

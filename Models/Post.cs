@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Mxstrong.Models
 {
@@ -10,6 +11,8 @@ namespace Mxstrong.Models
     public string Title { get; set; }
     [Required]
     public string Body { get; set; }
+    [Required]
+    public DateTime CreatedAt { get; set; }
     [Required]
     public string UserId { get; set; }
     public User User { get; set; }

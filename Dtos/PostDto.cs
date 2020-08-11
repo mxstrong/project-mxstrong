@@ -1,3 +1,5 @@
+using System;
+
 namespace Mxstrong.Dtos
 {
   public class PostDto
@@ -8,5 +10,6 @@ namespace Mxstrong.Dtos
     public string Topic { get; set; }
     public string UserId { get; set; }
     public string Author { get; set; }
+    public string CreatedAt { get; set; }
   }
 }
