@@ -166,6 +166,7 @@ namespace Mxstrong.Controllers
       {
         return NotFound();
       }
+
       if (HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier) != post.UserId && post.User.Role != Role.Admin)
       {
         return Unauthorized();

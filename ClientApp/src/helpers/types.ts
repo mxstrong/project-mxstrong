@@ -6,6 +6,7 @@ import {
   UPDATE_POST,
   UPDATE_TOPIC,
   SET_CURRENT_POST,
+  UPDATE_COMMENTS,
 } from "../actions/types";
 import { ThunkAction } from "redux-thunk";
 import { AppState } from "../reducers";
@@ -110,3 +111,18 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+
+export interface IComment {
+  commentId: string;
+  text: string;
+  createdAt: string;
+  children: IComment[];
+  postId: string;
+  userId: string;
+  author: string;
+}
+
+export interface IUpdateCommentsAction {
+  type: typeof UPDATE_COMMENTS;
+  payload: IComment[];
+}

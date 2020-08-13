@@ -9,5 +9,6 @@ namespace Mxstrong.Models
     public DbSet<ActivationToken> ActivationTokens { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<Topic> Topics { get; set; }
+    public DbSet<Comment> Comments { get; set; }
   }
 }

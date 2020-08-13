@@ -1,5 +1,10 @@
 import { IPostsReducer, PostActionTypes } from "../helpers/types";
-import { UPDATE_POSTS, UPDATE_POST, SET_CURRENT_POST } from "../actions/types";
+import {
+  UPDATE_POSTS,
+  UPDATE_POST,
+  SET_CURRENT_POST,
+  UPDATE_COMMENTS,
+} from "../actions/types";
 import { Reducer } from "redux";
 
 export const initialState = {

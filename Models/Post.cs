@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Mxstrong.Models
@@ -19,5 +20,6 @@ namespace Mxstrong.Models
     [Required]
     public string TopicId { get; set; }
     public Topic Topic { get; set; }
+    public List<Comment> Comments { get; set; }
   }
 }

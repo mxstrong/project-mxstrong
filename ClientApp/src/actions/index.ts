@@ -6,6 +6,7 @@ import {
   UPDATE_POST,
   UPDATE_TOPIC,
   SET_CURRENT_POST,
+  UPDATE_COMMENTS,
 } from "./types";
 import {
   IUserLoginData,
@@ -22,6 +23,8 @@ import {
   IEditPostData,
   ISetCurrentPostAction,
   AppThunk,
+  IComment,
+  IUpdateCommentsAction,
 } from "../helpers/types";
 import { Dispatch, Action } from "redux";
 import {
@@ -32,6 +35,7 @@ import {
   ADD_POST_URL,
   ADD_TOPIC_URL,
   EDIT_POST_URL,
+  FETCH_COMMENTS_URL,
 } from "../constants/urls";
 
 function updateUser(user: string): IUpdateUserAction {
@@ -62,17 +66,17 @@ function updateTopics(topics: ITopic[]): IUpdateTopicsAction {
   };
 }
 
-function addPost(post: IPost): IAddPostAction {
-  return {
-    type: UPDATE_POST,
-    payload: post,
-  };
-}
-
 function addTopic(topic: ITopic): IAddTopicAction {
   return {
     type: UPDATE_TOPIC,
     payload: topic,
+  };
+}
+
+function updateComments(comments: IComment[]): IUpdateCommentsAction {
+  return {
+    type: UPDATE_COMMENTS,
+    payload: comments,
   };
 }
 
@@ -269,6 +273,18 @@ export function editPost(post: IEditPostData, userToken: string): AppThunk {
       });
       const posts: IPost[] = await response.json();
       dispatch(updatePosts(posts));
+    }
+  };
+}
+
+export function fetchComments(postId: string): AppThunk {
+  return async function (dispatch: Dispatch<IUpdateCommentsAction>) {
+    const response = await fetch(FETCH_COMMENTS_URL + "/" + postId, {
+      method: "GET",
+    });
+    if (response.ok) {
+      const comments: IComment[] = await response.json();
+      dispatch(updateComments(comments));
     }
   };
 }

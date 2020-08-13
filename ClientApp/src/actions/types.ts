@@ -5,3 +5,4 @@ export const UPDATE_TOPICS = "UPDATE_TOPICS";
 export const UPDATE_POST = "UPDATE_POST";
 export const UPDATE_TOPIC = "UPDATE_TOPIC";
 export const SET_CURRENT_POST = "SET_CURRENT_POST";
+export const UPDATE_COMMENTS = "UPDATE_COMMENTS";
