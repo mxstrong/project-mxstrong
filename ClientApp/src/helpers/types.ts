@@ -120,6 +120,7 @@ export interface IComment {
   postId: string;
   userId: string;
   author: string;
+  parentId: string;
 }
 
 export interface IUpdateCommentsAction {

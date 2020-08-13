@@ -155,6 +155,7 @@ namespace Mxstrong.Controllers
         PostId = comment.PostId,
         UserId = comment.UserId,
         Author = comment.User.FullName,
+        ParentId = comment.ParentId,
       };
     }
   }

@@ -27,7 +27,11 @@ import {
 
 const useStyles = makeStyles((theme: Theme) => ({
   comment: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(2),
+    width: "300px",
+  },
+  commentWrapper: {
+    marginLeft: theme.spacing(2),
   },
   header: {
     "& > *": {
@@ -85,75 +89,127 @@ export default function ViewPost(props: IProps) {
     return <Redirect to="/posts" />;
   }
 
-  function renderComment(comment: IComment) {
+  function renderComment(comment: IComment, parentId: string | null = null) {
+    if (comment.parentId !== null && comment.parentId !== parentId) {
+      return;
+    }
     return (
-      <Card key={comment.commentId} className={classes.comment}>
-        {comment.commentId == commentToEdit.commentId ? (
-          <React.Fragment>
-            <TextField
-              multiline
-              placeholder="Write updated comment's text here"
-              value={commentToEdit.text}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setCommentToEdit({
-                  ...commentToEdit,
-                  text: event.target.value,
-                })
-              }
-            />
-            <Button color="primary" onClick={handleEdit}>
-              Update Comment
-            </Button>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <CardHeader
-              className={classes.header}
-              action={
-                userProfile.role === role.admin ||
-                userProfile.userId == (post ? post.userId : "") ? (
-                  <React.Fragment>
-                    <Button
-                      onClick={() =>
-                        setCommentToEdit({
-                          ...commentToEdit,
-                          commentId: comment.commentId,
-                          text: comment.text,
-                        })
-                      }
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      color="secondary"
-                      onClick={() => handleDelete(comment.commentId)}
-                    >
-                      Delete
-                    </Button>
-                  </React.Fragment>
-                ) : (
-                  ""
-                )
-              }
-              title={comment.author}
-            />
-            <CardContent>{comment.text}</CardContent>
-            <CardActionArea>
+      <div className={classes.commentWrapper}>
+        <Card key={comment.commentId} className={classes.comment}>
+          {comment.commentId == commentToEdit.commentId ? (
+            <React.Fragment>
+              <TextField
+                multiline
+                placeholder="Write updated comment's text here"
+                value={commentToEdit.text}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setCommentToEdit({
+                    ...commentToEdit,
+                    text: event.target.value,
+                  })
+                }
+                variant="outlined"
+              />
+              <Button color="primary" onClick={handleEdit}>
+                Update Comment
+              </Button>
               <Button
-                color="primary"
+                color="secondary"
                 onClick={() =>
-                  setNewComment({
-                    ...newComment,
-                    parentId: comment.commentId,
+                  setCommentToEdit({
+                    commentId: "",
+                    text: "",
+                    postId: post ? post.postId : "",
+                    userId: userProfile.userId,
                   })
                 }
               >
-                Reply
+                Cancel
               </Button>
-            </CardActionArea>
-          </React.Fragment>
-        )}
-      </Card>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <CardHeader
+                className={classes.header}
+                action={
+                  userProfile.role === role.admin ||
+                  userProfile.userId === comment.userId ? (
+                    <React.Fragment>
+                      <Button
+                        onClick={() =>
+                          setCommentToEdit({
+                            ...commentToEdit,
+                            commentId: comment.commentId,
+                            text: comment.text,
+                          })
+                        }
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        color="secondary"
+                        onClick={() => handleDelete(comment.commentId)}
+                      >
+                        Delete
+                      </Button>
+                    </React.Fragment>
+                  ) : (
+                    ""
+                  )
+                }
+                title={comment.author}
+              />
+              <CardContent>{comment.text}</CardContent>
+              <CardActionArea>
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    if (newComment.parentId !== comment.commentId) {
+                      setNewComment({
+                        ...newComment,
+                        parentId: comment.commentId,
+                      });
+                    } else {
+                      setNewComment({
+                        ...newComment,
+                        parentId: null,
+                      });
+                    }
+                  }}
+                >
+                  Reply
+                </Button>
+              </CardActionArea>
+              {newComment.parentId == comment.commentId ? (
+                <React.Fragment>
+                  <TextField
+                    variant="outlined"
+                    multiline
+                    placeholder="Write comment's text here"
+                    value={newComment.text}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                      setNewComment({
+                        ...newComment,
+                        text: event.target.value,
+                      })
+                    }
+                  />
+                  <Button color="primary" onClick={handleClick}>
+                    Comment
+                  </Button>
+                </React.Fragment>
+              ) : (
+                ""
+              )}
+            </React.Fragment>
+          )}
+        </Card>
+        {comment.children
+          ? comment.children.map((child) =>
+              renderComment(child, comment.commentId)
+            )
+          : ""}
+      </div>
     );
   }
 
@@ -219,18 +275,25 @@ export default function ViewPost(props: IProps) {
       <Typography variant="subtitle2">{post.topic}</Typography>
       <Typography variant="subtitle2">{post.createdAt}</Typography>
       <Typography variant="body2">{post.body}</Typography>
-      <TextField
-        variant="outlined"
-        multiline
-        placeholder="Write comment's text here"
-        value={newComment.text}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          setNewComment({ ...newComment, text: event.target.value })
-        }
-      />
-      <Button color="primary" onClick={handleClick}>
-        Comment
-      </Button>
+      {newComment.parentId == null ? (
+        <React.Fragment>
+          <TextField
+            variant="outlined"
+            multiline
+            placeholder="Write comment's text here"
+            value={newComment.text}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setNewComment({ ...newComment, text: event.target.value })
+            }
+          />
+          <Button color="primary" onClick={handleClick}>
+            Comment
+          </Button>{" "}
+        </React.Fragment>
+      ) : (
+        ""
+      )}
+
       <React.Fragment>
         {comments && comments.length > 0
           ? comments.map((comment: IComment) => renderComment(comment))
