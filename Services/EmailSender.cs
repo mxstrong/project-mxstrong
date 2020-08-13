@@ -25,7 +25,7 @@ namespace Mxstrong.Services
           " If you did not intend to create Mxstrong account, ignore this letter";
       var htmlContent = $"<html><body><h2 style=\"font-size: 36\">Hello, {recipient.FullName},</h2><br>" +
           "<div style=\"font-size: 20;\">To complete your registration " +
-          $"<a style=\"color: blue\" href=\"https://localhost:5001/api/auth/activate/{token.Id}\">click here</a><br><br>" +
+          $"<a style=\"color: blue\" href=\"https://mxstrong.azurewebsites.net/api/auth/activate/{token.Id}\">click here</a><br><br>" +
           "If you did not intend to create Mxstrong account, ignore this letter.</div></body></html>";
       var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
       var response = await client.SendEmailAsync(msg);

@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   link: {
     textDecoration: "none",
+    color: "#000000",
   },
 }));
 
@@ -86,43 +87,43 @@ export default function Posts() {
     <Paper className={classes.paper}>
       <Typography variant="h3">Posts</Typography>
       {posts.map((post: IPost) => (
-        <Link to={"/post?id=" + post.postId} className={classes.link}>
-          <Card className={classes.card} key={post.postId}>
-            <CardHeader
-              action={
-                userProfile.role === role.admin ||
-                userProfile.userId == post.userId ? (
-                  <React.Fragment>
-                    <IconButton aria-label="settings" onClick={handleClick}>
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={handleClose}
-                      className={classes.menu}
-                    >
-                      <MenuItem onClick={() => handleEdit(post)}>Edit</MenuItem>
-                      <MenuItem onClick={() => handleDelete(post.postId)}>
-                        Delete
-                      </MenuItem>
-                    </Menu>
-                  </React.Fragment>
-                ) : (
-                  ""
-                )
-              }
-              title={post.title}
-              subheader={`By ${post.author} 
-              ${post.topic}  
+        <Card className={classes.card} key={post.postId}>
+          <CardHeader
+            action={
+              userProfile.role === role.admin ||
+              userProfile.userId == post.userId ? (
+                <React.Fragment>
+                  <IconButton aria-label="settings" onClick={handleClick}>
+                    <MoreVertIcon />
+                  </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    className={classes.menu}
+                  >
+                    <MenuItem onClick={() => handleEdit(post)}>Edit</MenuItem>
+                    <MenuItem onClick={() => handleDelete(post.postId)}>
+                      Delete
+                    </MenuItem>
+                  </Menu>
+                </React.Fragment>
+              ) : (
+                ""
+              )
+            }
+            title={post.title}
+            subheader={`By ${post.author} 
+              Topic: ${post.topic}  
               ${post.createdAt}`}
-            />
+          />
+          <Link to={"/post?id=" + post.postId} className={classes.link}>
             <CardContent>
               <Typography variant="body2">{post.body}...</Typography>
             </CardContent>
-          </Card>
-        </Link>
+          </Link>
+        </Card>
       ))}
       <Card>
         <CardActionArea>

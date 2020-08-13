@@ -254,6 +254,7 @@ export function editPost(post: IEditPostData, userToken: string): AppThunk {
     const response = await fetch(EDIT_POST_URL + "/" + post.postId, {
       method: "PUT",
       headers: {
+        Authorization: "Bearer " + userToken,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedPost),

@@ -101,7 +101,7 @@ namespace Mxstrong.Controllers
       var user = await _repo.ActivateUser(tokenId);
       if (user.Activated)
       {
-        return Redirect("https://localhost:5001/login");
+        return Redirect("https://mxstrong.azurewebsites.net/login");
       }
       return BadRequest("Wrong activation token");
     }
