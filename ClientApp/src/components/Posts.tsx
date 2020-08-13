@@ -12,6 +12,7 @@ import {
   Fab,
   Menu,
   MenuItem,
+  Button,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -86,6 +87,10 @@ export default function Posts() {
   return (
     <Paper className={classes.paper}>
       <Typography variant="h3">Posts</Typography>
+      <Fab component={Link} to="/posts/add" color="primary" variant="extended">
+        Add New Post
+        <AddIcon />
+      </Fab>
       {posts.map((post: IPost) => (
         <Card className={classes.card} key={post.postId}>
           <CardHeader
@@ -125,13 +130,6 @@ export default function Posts() {
           </Link>
         </Card>
       ))}
-      <Card>
-        <CardActionArea>
-          <Link to="/posts/add" component={Fab} color="primary">
-            <AddIcon />
-          </Link>
-        </CardActionArea>
-      </Card>
     </Paper>
   );
 }
