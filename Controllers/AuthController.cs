@@ -107,9 +107,9 @@ namespace Mxstrong.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> EmailTaken(string email)
+    public async Task<IActionResult> EmailTaken(CheckEmailDto emailDto)
     {
-      if (await _repo.UserExists(email))
+      if (await _repo.UserExists(emailDto.Email))
       {
         return BadRequest("Email is already taken");
       }
@@ -131,6 +131,7 @@ namespace Mxstrong.Controllers
       return Ok(profile);
     }
     [Authorize(Roles = Role.Admin)]
+    [HttpGet]
     public async Task<List<UserProfileDto>> Users()
     {
       var users = await _repo.GetUsers();
@@ -139,7 +140,7 @@ namespace Mxstrong.Controllers
         UserId = user.UserId,
         Email = user.Email,
         FullName = user.FullName,
-        Role = user.Role,
+        Role = user.Role
       }).ToList();
     }
     [Authorize(Roles = Role.Admin)]
