@@ -11,8 +11,8 @@ import { AppState } from "../reducers";
 import { loadUser, loadUserProfile, logoutUser } from "../actions";
 import Posts from "./Posts";
 import AddPost from "./AddPost";
-import InitialValues from "./InitialValues";
 import ViewPost from "./ViewPost";
+import EditPost from "./EditPost";
 
 const App = () => {
   const [cookies, setCookie] = useCookies(["user"]);
@@ -66,7 +66,7 @@ const App = () => {
           <AddPost />
         </Route>
         <Route path="/posts/edit">
-          <InitialValues />
+          <EditPost />
         </Route>
         <Route path="/login">
           <Auth>

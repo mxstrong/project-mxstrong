@@ -1,18 +1,13 @@
-import React, {
-  useEffect,
-  FunctionComponent,
-  ComponentType,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { Paper, makeStyles, Theme, Button, MenuItem } from "@material-ui/core";
-import { renderTextField } from "../helpers/formHelpers";
-import { Field, InjectedFormProps, reduxForm } from "redux-form";
 import { fetchTopics, addNewPost } from "../actions";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../reducers";
 import { ITopic, IPostFormData, IIndexable } from "../helpers/types";
 import { Link, Redirect } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { Field, Formik, Form, FormikHelpers } from "formik";
+import { TextField } from "formik-material-ui";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -59,9 +54,8 @@ type IErrors = IIndexable & {
   body?: string;
 };
 
-function AddPost(props: InjectedFormProps<IPostFormData, {}>) {
+export default function AddPost() {
   const classes = useStyles();
-  const { handleSubmit, pristine, submitting } = props;
   const dispatch = useDispatch();
   const user = useSelector((state: AppState) => state.auth.user);
   const [cookies] = useCookies(["user"]);
@@ -87,79 +81,88 @@ function AddPost(props: InjectedFormProps<IPostFormData, {}>) {
 
   return (
     <Paper className={classes.paper}>
-      <form
-        className={classes.form}
-        onSubmit={handleSubmit((values, dispatch) => {
+      <Formik
+        initialValues={{
+          title: "",
+          topic: "",
+          otherTopic: "",
+          body: "",
+        }}
+        onSubmit={(
+          values: IPostFormData,
+          { setSubmitting }: FormikHelpers<IPostFormData>
+        ) => {
           dispatch(addNewPost(values, user));
+          setSubmitting(false);
           setSuccess(true);
-        })}
+        }}
+        validate={validate}
       >
-        <Field
-          className={classes.input}
-          name="title"
-          component={renderTextField}
-          label="Title"
-          variant="outlined"
-        />
-        <Field
-          select
-          className={classes.input}
-          name="topic"
-          component={renderTextField}
-          label="Topic"
-          variant="outlined"
-        >
-          <MenuItem value="">None</MenuItem>
-          {topics.map((topic: ITopic) => (
-            <MenuItem value={topic.name}>{topic.name}</MenuItem>
-          ))}
-          <MenuItem value="other">Other</MenuItem>
-        </Field>
-        {topic === "other" ? (
-          <Field
-            className={classes.input}
-            name="otherTopic"
-            component={renderTextField}
-            label="Other Topic"
-            variant="outlined"
-          />
-        ) : (
-          ""
+        {({ isSubmitting }) => (
+          <Form className={classes.form}>
+            <Field
+              className={classes.input}
+              name="title"
+              component={TextField}
+              label="Title"
+              variant="outlined"
+            />
+            <Field
+              select
+              className={classes.input}
+              name="topic"
+              component={TextField}
+              label="Topic"
+              variant="outlined"
+            >
+              <MenuItem value="">None</MenuItem>
+              {topics.map((topic: ITopic) => (
+                <MenuItem value={topic.name}>{topic.name}</MenuItem>
+              ))}
+              <MenuItem value="other">Other</MenuItem>
+            </Field>
+            {topic === "other" ? (
+              <Field
+                className={classes.input}
+                name="otherTopic"
+                component={TextField}
+                label="Other Topic"
+                variant="outlined"
+              />
+            ) : (
+              ""
+            )}
+            <Field
+              className={classes.input}
+              name="body"
+              component={TextField}
+              label="Body"
+              multiline
+              variant="outlined"
+            />
+            <div>
+              <Button
+                className={classes.button}
+                type="submit"
+                disabled={isSubmitting}
+                variant="contained"
+                color="primary"
+              >
+                Submit
+              </Button>
+              <Button
+                to="/posts"
+                className={classes.button}
+                component={Link}
+                color="secondary"
+                variant="contained"
+              >
+                Cancel
+              </Button>
+            </div>
+          </Form>
         )}
-        <Field
-          className={classes.input}
-          name="body"
-          component={renderTextField}
-          label="Body"
-          multiline
-          variant="outlined"
-        />
-        <div>
-          <Button
-            className={classes.button}
-            type="submit"
-            disabled={pristine || submitting}
-            variant="contained"
-            color="primary"
-          >
-            Submit
-          </Button>
-          <Button
-            to="/posts"
-            className={classes.button}
-            component={Link}
-            color="secondary"
-            variant="contained"
-          >
-            Cancel
-          </Button>
-        </div>
-      </form>
+      </Formik>
     </Paper>
   );
 }
-
-export default reduxForm({
-  form: "AddPostForm",
-  validate,
-})(AddPost);

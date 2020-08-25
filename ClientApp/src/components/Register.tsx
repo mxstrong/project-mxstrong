@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { makeStyles, Paper, Button, Typography } from "@material-ui/core";
-import { Field, reduxForm, InjectedFormProps } from "redux-form";
-import { renderTextField } from "../helpers/formHelpers";
 import { Link, Redirect } from "react-router-dom";
 import { IIndexable } from "../helpers/types";
 import { CHECK_EMAIL_URL, REGISTER_URL } from "../constants/urls";
+import { Field, Form, Formik, FormikHelpers } from "formik";
+import { TextField } from "formik-material-ui";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -45,20 +45,20 @@ type IErrors = IIndexable & {
   passwordRepeat?: string;
 };
 
-const asyncValidate = async (values: IValues) => {
-  return new Promise(async (resolve, reject) => {
-    const response = await fetch(CHECK_EMAIL_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values.email),
-    });
-    if (!response.ok) {
-      reject({ email: "This email is already taken" });
-    }
-    resolve();
+const validateEmail = async (value: string) => {
+  let error: string | undefined = undefined;
+  console.log(JSON.stringify(value));
+  const response = await fetch(CHECK_EMAIL_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email: value }),
   });
+  if (!response.ok) {
+    error = "This email is already taken";
+  }
+  return error;
 };
 
 const validate = (values: IValues) => {
@@ -90,9 +90,8 @@ const validate = (values: IValues) => {
   return errors;
 };
 
-function RegisterForm(props: InjectedFormProps<IValues, {}>) {
+export default function RegisterForm() {
   const classes = useStyles();
-  const { handleSubmit, pristine, submitting } = props;
   const [success, setSuccess] = useState(false);
 
   const register = async (values: IValues) => {
@@ -123,58 +122,72 @@ function RegisterForm(props: InjectedFormProps<IValues, {}>) {
       <Typography className={classes.text} variant="h3">
         Sign Up
       </Typography>
-      <form className={classes.form} onSubmit={handleSubmit(register)}>
-        <Field
-          className={classes.input}
-          type="name"
-          name="fullName"
-          component={renderTextField}
-          label="Full Name"
-          variant="outlined"
-        />
-        <Field
-          className={classes.input}
-          type="email"
-          name="email"
-          component={renderTextField}
-          label="Email"
-          variant="outlined"
-        />
-        <Field
-          className={classes.input}
-          type="password"
-          name="password"
-          component={renderTextField}
-          label="Password"
-          variant="outlined"
-        />
-        <Field
-          className={classes.input}
-          type="password"
-          name="passwordRepeat"
-          component={renderTextField}
-          label="Repeat password"
-          variant="outlined"
-        />
-        <Button
-          className={classes.button}
-          type="submit"
-          disabled={pristine || submitting}
-          variant="contained"
-          color="primary"
-        >
-          Register
-        </Button>
-      </form>
+      <Formik
+        initialValues={{
+          fullName: "",
+          email: "",
+          password: "",
+          passwordRepeat: "",
+        }}
+        onSubmit={(
+          values: IValues,
+          { setSubmitting }: FormikHelpers<IValues>
+        ) => {
+          register(values);
+          setSubmitting(false);
+        }}
+        validate={validate}
+      >
+        {({ isSubmitting }) => (
+          <Form className={classes.form}>
+            <Field
+              className={classes.input}
+              type="name"
+              name="fullName"
+              component={TextField}
+              label="Full Name"
+              variant="outlined"
+            />
+            <Field
+              className={classes.input}
+              type="email"
+              name="email"
+              component={TextField}
+              label="Email"
+              variant="outlined"
+              validate={validateEmail}
+            />
+            <Field
+              className={classes.input}
+              type="password"
+              name="password"
+              component={TextField}
+              label="Password"
+              variant="outlined"
+            />
+            <Field
+              className={classes.input}
+              type="password"
+              name="passwordRepeat"
+              component={TextField}
+              label="Repeat password"
+              variant="outlined"
+            />
+            <Button
+              className={classes.button}
+              type="submit"
+              disabled={isSubmitting}
+              variant="contained"
+              color="primary"
+            >
+              Register
+            </Button>
+          </Form>
+        )}
+      </Formik>
       <Typography className={classes.text} variant="body2">
         Already registered? <Link to="/login">Login</Link>
       </Typography>
     </Paper>
   );
 }
-
-export default reduxForm({
-  form: "RegisterForm",
-  validate,
-  asyncValidate,
-})(RegisterForm);

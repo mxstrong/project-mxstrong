@@ -1,12 +1,12 @@
 import React from "react";
 import { makeStyles, Paper, Button, Typography } from "@material-ui/core";
 import { Link, Redirect } from "react-router-dom";
-import { Field, reduxForm, InjectedFormProps } from "redux-form";
-import { renderTextField } from "../helpers/formHelpers";
 import { IIndexable, IUserLoginData } from "../helpers/types";
 import { loginUser } from "../actions";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../reducers";
+import { Field, Form, Formik, FormikHelpers } from "formik";
+import { TextField } from "formik-material-ui";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -57,11 +57,10 @@ type IErrors = IIndexable & {
   password?: string;
 };
 
-function LoginForm(props: InjectedFormProps<IUserLoginData, {}>) {
+export default function LoginForm() {
   const classes = useStyles();
-  const { handleSubmit, pristine, submitting } = props;
   const user = useSelector((state: AppState) => state.auth.user);
-
+  const dispatch = useDispatch();
   if (user) {
     return <Redirect to="/" />;
   }
@@ -71,46 +70,53 @@ function LoginForm(props: InjectedFormProps<IUserLoginData, {}>) {
       <Typography className={classes.text} variant="h3">
         Sign In
       </Typography>
-      <form
-        className={classes.form}
-        onSubmit={handleSubmit((values, dispatch) => {
+      <Formik
+        initialValues={{
+          email: "",
+          password: "",
+        }}
+        onSubmit={(
+          values: IUserLoginData,
+          { setSubmitting }: FormikHelpers<IUserLoginData>
+        ) => {
           dispatch(loginUser(values));
-        })}
+          setSubmitting(false);
+        }}
+        validate={validate}
       >
-        <Field
-          className={classes.input}
-          type="email"
-          name="email"
-          component={renderTextField}
-          label="Email"
-          variant="outlined"
-        />
-        <Field
-          className={classes.input}
-          type="password"
-          name="password"
-          component={renderTextField}
-          label="Password"
-          variant="outlined"
-        />
-        <Button
-          className={classes.button}
-          type="submit"
-          disabled={pristine || submitting}
-          variant="contained"
-          color="primary"
-        >
-          Login
-        </Button>
-      </form>
+        {({ isSubmitting }) => (
+          <Form className={classes.form}>
+            <Field
+              className={classes.input}
+              type="email"
+              name="email"
+              component={TextField}
+              label="Email"
+              variant="outlined"
+            />
+            <Field
+              className={classes.input}
+              type="password"
+              name="password"
+              component={TextField}
+              label="Password"
+              variant="outlined"
+            />
+            <Button
+              className={classes.button}
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={isSubmitting}
+            >
+              Login
+            </Button>
+          </Form>
+        )}
+      </Formik>
       <Typography className={classes.text} variant="body2">
         Not our user yet? <Link to="/register">Register</Link>
       </Typography>
     </Paper>
   );
 }
-
-export default reduxForm({
-  form: "LoginForm",
-  validate,
-})(LoginForm);
