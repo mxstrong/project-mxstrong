@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  IconButton,
   Button,
   TextField,
   CardActionArea,
@@ -18,7 +17,6 @@ import { Redirect } from "react-router-dom";
 import { fetchCurrentPost, fetchComments } from "../actions";
 import { IComment } from "../helpers/types";
 import { role } from "../constants/roles";
-import { render } from "@testing-library/react";
 import {
   ADD_COMMENT_URL,
   EDIT_COMMENT_URL,

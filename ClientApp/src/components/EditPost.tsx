@@ -11,8 +11,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
 import { AppState } from "../reducers";
 import { useCookies } from "react-cookie";
-import { Field, Form, Formik, FormikHelpers } from "formik";
+import { Field, Form, Formik, FormikHelpers, useFormikContext } from "formik";
 import { TextField } from "formik-material-ui";
+import PostForm from "./PostForm";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -74,11 +75,6 @@ export default function EditPost() {
   const userToken = useSelector((state: AppState) => state.auth.user);
   const post = useSelector((state: AppState) => state.posts.currentPost);
 
-  const topics = useSelector((state: AppState) => state.topics);
-  const topic = useSelector(
-    (state: AppState) => state.form.EditPostForm?.values?.topic
-  );
-
   if ((!user && !userCookie) || !post) {
     return <Redirect to="/posts" />;
   }
@@ -116,70 +112,7 @@ export default function EditPost() {
         }}
         validate={validate}
       >
-        {({ isSubmitting }) => (
-          <Form className={classes.form}>
-            <Field
-              className={classes.input}
-              name="title"
-              component={TextField}
-              label="Title"
-              variant="outlined"
-            />
-            <Field
-              select
-              className={classes.input}
-              name="topic"
-              component={TextField}
-              label="Topic"
-              variant="outlined"
-            >
-              <MenuItem value="">None</MenuItem>
-              {topics.map((topic: ITopic) => (
-                <MenuItem value={topic.name}>{topic.name}</MenuItem>
-              ))}
-              <MenuItem value="other">Other</MenuItem>
-            </Field>
-            {topic === "other" ? (
-              <Field
-                className={classes.input}
-                name="otherTopic"
-                component={TextField}
-                label="Other Topic"
-                variant="outlined"
-              />
-            ) : (
-              ""
-            )}
-            <Field
-              className={classes.input}
-              name="body"
-              component={TextField}
-              label="Body"
-              multiline
-              variant="outlined"
-            />
-            <div>
-              <Button
-                className={classes.button}
-                type="submit"
-                disabled={isSubmitting}
-                variant="contained"
-                color="primary"
-              >
-                Submit
-              </Button>
-              <Button
-                to="/posts"
-                className={classes.button}
-                component={Link}
-                color="secondary"
-                variant="contained"
-              >
-                Cancel
-              </Button>
-            </div>
-          </Form>
-        )}
+        {({ isSubmitting }) => <PostForm isSubmitting={isSubmitting} />}
       </Formik>
     </Paper>
   );
