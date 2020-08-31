@@ -47,7 +47,6 @@ type IErrors = IIndexable & {
 
 const validateEmail = async (value: string) => {
   let error: string | undefined = undefined;
-  console.log(JSON.stringify(value));
   const response = await fetch(CHECK_EMAIL_URL, {
     method: "POST",
     headers: {
