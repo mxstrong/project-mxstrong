@@ -61,7 +61,7 @@ export default function LoginForm() {
   const classes = useStyles();
   const user = useSelector((state: AppState) => state.auth.user);
   const dispatch = useDispatch();
-  if (user) {
+  if (user.userId) {
     return <Redirect to="/" />;
   }
 

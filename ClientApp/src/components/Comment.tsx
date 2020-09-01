@@ -51,15 +51,14 @@ export default function Comment(props: ICommentProps) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const userProfile = useSelector((state: AppState) => state.auth.userProfile);
-  const userToken = useSelector((state: AppState) => state.auth.user);
+  const user = useSelector((state: AppState) => state.auth.user);
   const post = useSelector((state: AppState) => state.posts.currentPost);
 
   let [commentToEdit, setCommentToEdit] = useState({
     commentId: "",
     text: "",
     postId: post ? post.postId : "",
-    userId: userProfile.userId,
+    userId: user.userId,
   });
 
   let [newComment, setNewComment] = useState<IState>({
@@ -78,7 +77,6 @@ export default function Comment(props: ICommentProps) {
       {
         method: "PUT",
         headers: {
-          Authorization: "Bearer " + userToken,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(commentToEdit),
@@ -89,7 +87,7 @@ export default function Comment(props: ICommentProps) {
         commentId: "",
         text: "",
         postId: post ? post.postId : "",
-        userId: userProfile.userId,
+        userId: user.userId,
       });
       dispatch(fetchComments(post ? post.postId : ""));
     }
@@ -99,7 +97,6 @@ export default function Comment(props: ICommentProps) {
     const response = await fetch(DELETE_COMMENT_URL + "/" + commentId, {
       method: "DELETE",
       headers: {
-        Authorization: "Bearer " + userToken,
         "Content-Type": "application/json",
       },
     });
@@ -112,7 +109,6 @@ export default function Comment(props: ICommentProps) {
     const response = await fetch(ADD_COMMENT_URL, {
       method: "POST",
       headers: {
-        Authorization: "Bearer " + userToken,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newComment),
@@ -154,7 +150,7 @@ export default function Comment(props: ICommentProps) {
                   commentId: "",
                   text: "",
                   postId: post ? post.postId : "",
-                  userId: userProfile.userId,
+                  userId: user.userId,
                 })
               }
             >
@@ -166,8 +162,7 @@ export default function Comment(props: ICommentProps) {
             <CardHeader
               className={classes.header}
               action={
-                userProfile.role === role.admin ||
-                userProfile.userId === comment.userId ? (
+                user.role === role.admin || user.userId === comment.userId ? (
                   <React.Fragment>
                     <Button
                       onClick={() =>

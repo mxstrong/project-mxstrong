@@ -23,24 +23,17 @@ export interface IUserLoginData extends IIndexable {
 
 export interface IUpdateUserAction {
   type: typeof UPDATE_USER;
-  payload: string;
+  payload: IUser;
 }
 
 export type IRole = "User" | "Admin" | "";
 
-export interface IUserProfile {
+export interface IUser {
   userId: string;
   fullName: string;
   email: string;
   role: IRole;
 }
-
-export interface IUpdateProfileAction {
-  type: typeof UPDATE_PROFILE;
-  payload: IUserProfile;
-}
-
-export type AuthActionTypes = IUpdateUserAction | IUpdateProfileAction;
 
 export interface IPost {
   postId: string;

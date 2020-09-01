@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -92,7 +93,15 @@ namespace Mxstrong.Controllers
       var token = tokenHandler.CreateToken(tokenDescriptor);
       var tokenString = tokenHandler.WriteToken(token);
 
-      return Ok(new { tokenString });
+      HttpContext.Response.Cookies.Append("JWT", tokenString, new CookieOptions { HttpOnly = true });
+      return Ok();
+    }
+
+    [HttpPost]
+    public IActionResult Logout()
+    {
+      HttpContext.Response.Cookies.Delete("JWT");
+      return Ok();
     }
 
     [HttpGet("{tokenId}")]

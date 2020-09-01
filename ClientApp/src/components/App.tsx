@@ -5,43 +5,20 @@ import Register from "./Register";
 import { Route, Switch, Redirect, useLocation } from "react-router-dom";
 import Activate from "./Activate";
 import Header from "./Header";
-import { useCookies } from "react-cookie";
 import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../reducers";
-import { loadUser, loadUserProfile, logoutUser } from "../actions";
 import Posts from "./Posts";
 import AddPost from "./AddPost";
 import ViewPost from "./ViewPost";
 import EditPost from "./EditPost";
+import { fetchCurrentUser } from "../actions";
 
 const App = () => {
-  const [cookies, setCookie] = useCookies(["user"]);
-  const userCookie = cookies["user"];
   const dispatch = useDispatch();
-  const user = useSelector((state: AppState) => state.auth.user);
-  const userProfile = useSelector((state: AppState) => state.auth.userProfile);
 
   useEffect(() => {
-    if (userCookie && !user) {
-      dispatch(loadUser(userCookie));
-      dispatch(loadUserProfile(userCookie));
-    }
-  });
-
-  useEffect(() => {
-    if (user && !userCookie) {
-      setCookie("user", user, {
-        path: "/",
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      });
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (user && !userProfile) {
-      dispatch(loadUserProfile(user));
-    }
-  });
+    dispatch(fetchCurrentUser());
+  }, []);
 
   function useQuery() {
     return new URLSearchParams(useLocation().search);

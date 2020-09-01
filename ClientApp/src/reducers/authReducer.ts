@@ -1,13 +1,12 @@
-import { UPDATE_USER, UPDATE_PROFILE } from "../actions/types";
-import { AuthActionTypes } from "../helpers/types";
+import { UPDATE_USER } from "../actions/types";
+import { IUpdateUserAction } from "../helpers/types";
 import { Reducer } from "redux";
 
 export const initialState = {
-  user: "",
-  userProfile: { userId: "", fullName: "", email: "", role: "" },
+  user: { userId: "", fullName: "", email: "", role: "" },
 };
 
-export const authReducer: Reducer<typeof initialState, AuthActionTypes> = (
+export const authReducer: Reducer<typeof initialState, IUpdateUserAction> = (
   state = initialState,
   action
 ) => {
@@ -16,13 +15,6 @@ export const authReducer: Reducer<typeof initialState, AuthActionTypes> = (
       return {
         ...state,
         user: action.payload,
-      };
-    }
-
-    case UPDATE_PROFILE: {
-      return {
-        ...state,
-        userProfile: action.payload,
       };
     }
     default:

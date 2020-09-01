@@ -106,7 +106,7 @@ export default function EditPost() {
             author: post ? post.author : "",
             createdAt: post ? post.createdAt : "",
           };
-          dispatch(editPost(postData, userToken));
+          dispatch(editPost(postData));
           setSubmitting(false);
           setSuccess(true);
         }}

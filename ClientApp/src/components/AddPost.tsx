@@ -89,7 +89,7 @@ export default function AddPost() {
           values: IPostFormData,
           { setSubmitting }: FormikHelpers<IPostFormData>
         ) => {
-          dispatch(addNewPost(values, user));
+          dispatch(addNewPost(values));
           setSubmitting(false);
           setSuccess(true);
         }}

@@ -72,8 +72,7 @@ function Post(props: IPostProps) {
   const classes = useStyles();
   const { post } = props;
 
-  const userToken = useSelector((state: AppState) => state.auth.user);
-  const userProfile = useSelector((state: AppState) => state.auth.userProfile);
+  const user = useSelector((state: AppState) => state.auth.user);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
@@ -89,9 +88,6 @@ function Post(props: IPostProps) {
   async function handleDelete(post: IPost) {
     const response = await fetch(DELETE_POST_URL + "/" + post.postId, {
       method: "DELETE",
-      headers: {
-        Authorization: "Bearer " + userToken,
-      },
     });
     if (response.ok) {
       dispatch(fetchPosts());
@@ -114,8 +110,7 @@ function Post(props: IPostProps) {
     <Card className={classes.card} key={post.postId}>
       <CardHeader
         action={
-          userProfile.role === role.admin ||
-          userProfile.userId == post.userId ? (
+          user.role === role.admin || user.userId == post.userId ? (
             <React.Fragment>
               <IconButton aria-label="settings" onClick={handleClick}>
                 <MoreVertIcon />

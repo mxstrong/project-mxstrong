@@ -2,23 +2,19 @@ import {
   UPDATE_USER,
   UPDATE_POSTS,
   UPDATE_TOPICS,
-  UPDATE_PROFILE,
-  UPDATE_POST,
   UPDATE_TOPIC,
   SET_CURRENT_POST,
   UPDATE_COMMENTS,
 } from "./types";
 import {
   IUserLoginData,
+  IUser,
   IUpdateUserAction,
-  IUserProfile,
-  IUpdateProfileAction,
   IUpdatePostsAction,
   IPost,
   ITopic,
   IUpdateTopicsAction,
   IPostFormData,
-  IAddPostAction,
   IAddTopicAction,
   IEditPostData,
   ISetCurrentPostAction,
@@ -36,19 +32,13 @@ import {
   ADD_TOPIC_URL,
   EDIT_POST_URL,
   FETCH_COMMENTS_URL,
+  LOGOUT_URL,
 } from "../constants/urls";
 
-function updateUser(user: string): IUpdateUserAction {
+function updateUser(user: IUser): IUpdateUserAction {
   return {
     type: UPDATE_USER,
     payload: user,
-  };
-}
-
-function updateUserProfile(userProfile: IUserProfile): IUpdateProfileAction {
-  return {
-    type: UPDATE_PROFILE,
-    payload: userProfile,
   };
 }
 
@@ -97,45 +87,37 @@ export function loginUser(user: IUserLoginData): AppThunk {
       body: JSON.stringify(user),
     });
     if (response.ok) {
-      const data = await response.json();
-      const token = data.tokenString;
-      dispatch(updateUser(token));
+      const response = await fetch(CURRENT_USER_URL, {
+        method: "GET",
+      });
+      const user = await response.json();
+      dispatch(updateUser(user));
     } else {
       return Promise.reject();
     }
   };
 }
 
-export function loadUser(userToken: string) {
-  return function (dispatch: Dispatch<IUpdateUserAction>) {
-    dispatch(updateUser(userToken));
-  };
-}
-
-export function loadUserProfile(userToken: string) {
-  return async function (dispatch: Dispatch<IUpdateProfileAction>) {
-    const response = await fetch(CURRENT_USER_URL, {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + userToken,
-        "Content-Type": "application/json",
-      },
+export function logoutUser(): AppThunk {
+  return async function (dispatch: Dispatch<IUpdateUserAction>) {
+    const response = await fetch(LOGOUT_URL, {
+      method: "POST",
     });
     if (response.ok) {
-      const userProfile = await response.json();
-      dispatch(updateUserProfile(userProfile));
+      dispatch(updateUser({ userId: "", fullName: "", email: "", role: "" }));
     }
   };
 }
 
-export function logoutUser() {
-  return function (
-    dispatch: Dispatch<IUpdateUserAction | IUpdateProfileAction>
-  ) {
-    dispatch(updateUser(""));
-    dispatch(
-      updateUserProfile({ userId: "", fullName: "", email: "", role: "" })
-    );
+export function fetchCurrentUser(): AppThunk {
+  return async function (dispatch: Dispatch<IUpdateUserAction>) {
+    const response = await fetch(CURRENT_USER_URL, {
+      method: "GET",
+    });
+    if (response.ok) {
+      const user = await response.json();
+      dispatch(updateUser(user));
+    }
   };
 }
 
@@ -178,7 +160,7 @@ export function fetchTopics(): AppThunk {
   };
 }
 
-export function addNewPost(post: IPostFormData, userToken: string): AppThunk {
+export function addNewPost(post: IPostFormData): AppThunk {
   return async function (
     dispatch: Dispatch<IUpdatePostsAction | IAddTopicAction>
   ) {
@@ -186,7 +168,6 @@ export function addNewPost(post: IPostFormData, userToken: string): AppThunk {
       const response = await fetch(ADD_TOPIC_URL, {
         method: "POST",
         headers: {
-          Authorization: "Bearer " + userToken,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -208,7 +189,6 @@ export function addNewPost(post: IPostFormData, userToken: string): AppThunk {
     const response = await fetch(ADD_POST_URL, {
       method: "POST",
       headers: {
-        Authorization: "Bearer " + userToken,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newPost),
@@ -226,7 +206,7 @@ export function addNewPost(post: IPostFormData, userToken: string): AppThunk {
   };
 }
 
-export function editPost(post: IEditPostData, userToken: string): AppThunk {
+export function editPost(post: IEditPostData): AppThunk {
   return async function (
     dispatch: Dispatch<IAddTopicAction | IUpdatePostsAction>
   ) {
@@ -234,7 +214,6 @@ export function editPost(post: IEditPostData, userToken: string): AppThunk {
       const response = await fetch(ADD_TOPIC_URL, {
         method: "POST",
         headers: {
-          Authorization: "Bearer " + userToken,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -258,7 +237,6 @@ export function editPost(post: IEditPostData, userToken: string): AppThunk {
     const response = await fetch(EDIT_POST_URL + "/" + post.postId, {
       method: "PUT",
       headers: {
-        Authorization: "Bearer " + userToken,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedPost),

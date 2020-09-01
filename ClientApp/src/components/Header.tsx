@@ -36,15 +36,13 @@ export default function Header() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const user = useSelector((state: AppState) => state.auth.user);
-  const [cookies, setCookie, removeCookie] = useCookies(["user"]);
 
   function handleLogout() {
-    removeCookie("user", { path: "/" });
     dispatch(logoutUser());
   }
 
   function renderLoginButton() {
-    if (user) {
+    if (user.userId) {
       return <Button onClick={handleLogout}>Logout</Button>;
     } else {
       return (

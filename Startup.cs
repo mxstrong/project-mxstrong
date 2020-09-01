@@ -11,6 +11,7 @@ using Mxstrong.Data;
 using Mxstrong.Models;
 using Mxstrong.Services;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Mxstrong
 {
@@ -36,6 +37,14 @@ namespace Mxstrong
       var key = Encoding.ASCII.GetBytes(Configuration["JWTSecret"]);
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
       {
+        options.Events = new JwtBearerEvents
+        {
+          OnMessageReceived = context =>
+          {
+            context.Token = context.Request.Cookies["JWT"];
+            return Task.CompletedTask;
+          }
+        };
         options.TokenValidationParameters = new TokenValidationParameters
         {
           ValidateIssuerSigningKey = true,
