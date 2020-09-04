@@ -151,7 +151,7 @@ namespace Mxstrong.Controllers
         CommentId = comment.CommentId,
         Text = comment.Text,
         CreatedAt = comment.CreatedAt.ToString("yyyy-MM-dd"),
-        Children = !(comment.Children is null) ? comment.Children.Select(c => ConvertCommentToDto(c)).ToList() : null,
+        Children = comment.Children?.Select(c => ConvertCommentToDto(c)).ToList(),
         PostId = comment.PostId,
         UserId = comment.UserId,
         Author = comment.User.FullName,
