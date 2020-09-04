@@ -7,6 +7,7 @@ import {
   UPDATE_TOPIC,
   SET_CURRENT_POST,
   UPDATE_COMMENTS,
+  UPDATE_GOALS,
 } from "../actions/types";
 import { ThunkAction } from "redux-thunk";
 import { AppState } from "../reducers";
@@ -119,4 +120,18 @@ export interface IComment {
 export interface IUpdateCommentsAction {
   type: typeof UPDATE_COMMENTS;
   payload: IComment[];
+}
+
+export interface IGoal {
+  goalId: string;
+  text: string;
+  type: string;
+  progress: number;
+  parentGoalId: string | null;
+  subGoals: IGoal[];
+}
+
+export interface IUpdateGoalsAction {
+  type: typeof UPDATE_GOALS;
+  payload: IGoal[];
 }

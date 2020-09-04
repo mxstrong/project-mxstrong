@@ -17,3 +17,4 @@ export const FETCH_COMMENTS_URL = BASE_URL + "/api/comments";
 export const ADD_COMMENT_URL = BASE_URL + "/api/comments";
 export const EDIT_COMMENT_URL = BASE_URL + "/api/comments";
 export const DELETE_COMMENT_URL = BASE_URL + "/api/comments";
+export const FETCH_GOALS_URL = BASE_URL + "/api/goals";

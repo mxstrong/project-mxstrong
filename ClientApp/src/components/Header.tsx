@@ -9,8 +9,7 @@ import {
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../reducers";
-import { useCookies } from "react-cookie";
-import { logoutUser } from "../actions";
+import { logoutUser } from "../actions/auth";
 
 const useStyles = makeStyles((theme: Theme) => ({
   header: {
@@ -69,6 +68,14 @@ export default function Header() {
         component={Button}
       >
         Home
+      </Link>
+      <Link
+        color="inherit"
+        className={classes.menuItem}
+        to="/goals"
+        component={Button}
+      >
+        Goals
       </Link>
       {renderLoginButton()}
     </AppBar>
