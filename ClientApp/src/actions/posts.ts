@@ -1,46 +1,32 @@
 import {
-  UPDATE_USER,
+  IPost,
+  IUpdatePostsAction,
+  ITopic,
+  IUpdateTopicsAction,
+  IAddTopicAction,
+  IComment,
+  IUpdateCommentsAction,
+  ISetCurrentPostAction,
+  AppThunk,
+  IPostFormData,
+  IEditPostData,
+} from "../helpers/types";
+import {
   UPDATE_POSTS,
   UPDATE_TOPICS,
   UPDATE_TOPIC,
-  SET_CURRENT_POST,
   UPDATE_COMMENTS,
+  SET_CURRENT_POST,
 } from "./types";
+import { Dispatch } from "redux";
 import {
-  IUserLoginData,
-  IUser,
-  IUpdateUserAction,
-  IUpdatePostsAction,
-  IPost,
-  ITopic,
-  IUpdateTopicsAction,
-  IPostFormData,
-  IAddTopicAction,
-  IEditPostData,
-  ISetCurrentPostAction,
-  AppThunk,
-  IComment,
-  IUpdateCommentsAction,
-} from "../helpers/types";
-import { Dispatch, Action } from "redux";
-import {
-  LOGIN_URL,
-  CURRENT_USER_URL,
   FETCH_POSTS_URL,
   FETCH_TOPICS_URL,
-  ADD_POST_URL,
   ADD_TOPIC_URL,
+  ADD_POST_URL,
   EDIT_POST_URL,
   FETCH_COMMENTS_URL,
-  LOGOUT_URL,
 } from "../constants/urls";
-
-function updateUser(user: IUser): IUpdateUserAction {
-  return {
-    type: UPDATE_USER,
-    payload: user,
-  };
-}
 
 function updatePosts(posts: IPost[]): IUpdatePostsAction {
   return {
@@ -74,50 +60,6 @@ export function setCurrentPost(post: IPost): ISetCurrentPostAction {
   return {
     type: SET_CURRENT_POST,
     payload: post,
-  };
-}
-
-export function loginUser(user: IUserLoginData): AppThunk {
-  return async function (dispatch: Dispatch<IUpdateUserAction>) {
-    const response = await fetch(LOGIN_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    });
-    if (response.ok) {
-      const response = await fetch(CURRENT_USER_URL, {
-        method: "GET",
-      });
-      const user = await response.json();
-      dispatch(updateUser(user));
-    } else {
-      return Promise.reject();
-    }
-  };
-}
-
-export function logoutUser(): AppThunk {
-  return async function (dispatch: Dispatch<IUpdateUserAction>) {
-    const response = await fetch(LOGOUT_URL, {
-      method: "POST",
-    });
-    if (response.ok) {
-      dispatch(updateUser({ userId: "", fullName: "", email: "", role: "" }));
-    }
-  };
-}
-
-export function fetchCurrentUser(): AppThunk {
-  return async function (dispatch: Dispatch<IUpdateUserAction>) {
-    const response = await fetch(CURRENT_USER_URL, {
-      method: "GET",
-    });
-    if (response.ok) {
-      const user = await response.json();
-      dispatch(updateUser(user));
-    }
   };
 }
 

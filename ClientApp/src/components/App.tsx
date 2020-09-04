@@ -1,17 +1,18 @@
 import React, { useEffect } from "react";
-import Auth from "./Auth";
-import Login from "./Login";
-import Register from "./Register";
+import Auth from "./Auth/Auth";
+import Login from "./Auth/Login";
+import Register from "./Auth/Register";
 import { Route, Switch, Redirect, useLocation } from "react-router-dom";
-import Activate from "./Activate";
+import Activate from "./Auth/Activate";
 import Header from "./Header";
 import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../reducers";
-import Posts from "./Posts";
-import AddPost from "./AddPost";
-import ViewPost from "./ViewPost";
-import EditPost from "./EditPost";
-import { fetchCurrentUser } from "../actions";
+import Posts from "./Posts/Posts";
+import AddPost from "./Posts/AddPost";
+import ViewPost from "./Posts/ViewPost";
+import EditPost from "./Posts/EditPost";
+import { fetchCurrentUser } from "../actions/auth";
+import Goals from "./Goals/Goals";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -59,6 +60,9 @@ const App = () => {
           <Auth>
             <Activate />
           </Auth>
+        </Route>
+        <Route path="/goals">
+          <Goals />
         </Route>
       </Switch>
     </React.Fragment>

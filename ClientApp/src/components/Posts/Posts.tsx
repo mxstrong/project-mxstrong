@@ -15,12 +15,12 @@ import {
 import AddIcon from "@material-ui/icons/Add";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts, fetchCurrentPost } from "../actions";
-import { AppState } from "../reducers";
-import { IPost } from "../helpers/types";
+import { fetchPosts, fetchCurrentPost } from "../../actions/posts";
+import { AppState } from "../../reducers";
+import { IPost } from "../../helpers/types";
 import { Link, useHistory } from "react-router-dom";
-import { DELETE_POST_URL } from "../constants/urls";
-import { role } from "../constants/roles";
+import { DELETE_POST_URL } from "../../constants/urls";
+import { role } from "../../constants/roles";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {

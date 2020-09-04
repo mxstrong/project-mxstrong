@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { makeStyles, Paper, Button, Typography } from "@material-ui/core";
 import { Link, Redirect } from "react-router-dom";
-import { IIndexable } from "../helpers/types";
-import { CHECK_EMAIL_URL, REGISTER_URL } from "../constants/urls";
+import { IIndexable } from "../../helpers/types";
+import { CHECK_EMAIL_URL, REGISTER_URL } from "../../constants/urls";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import { TextField } from "formik-material-ui";
 

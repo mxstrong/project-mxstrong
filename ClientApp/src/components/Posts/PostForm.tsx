@@ -1,11 +1,11 @@
 import React from "react";
 import { useFormikContext, Form, Field } from "formik";
-import { IPostFormData, ITopic } from "../helpers/types";
+import { IPostFormData, ITopic } from "../../helpers/types";
 import { MenuItem, Button, makeStyles, Theme } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { TextField } from "formik-material-ui";
 import { useSelector } from "react-redux";
-import { AppState } from "../reducers";
+import { AppState } from "../../reducers";
 
 const useStyles = makeStyles((theme: Theme) => ({
   form: {

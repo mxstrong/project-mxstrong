@@ -1,13 +1,13 @@
-import { IComment } from "../helpers/types";
+import { IComment } from "../../helpers/types";
 import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../reducers";
+import { AppState } from "../../reducers";
 import React, { useState } from "react";
 import {
   EDIT_COMMENT_URL,
   DELETE_COMMENT_URL,
   ADD_COMMENT_URL,
-} from "../constants/urls";
-import { fetchComments } from "../actions";
+} from "../../constants/urls";
+import { fetchComments } from "../../actions/posts";
 import {
   Card,
   TextField,
@@ -18,7 +18,7 @@ import {
   makeStyles,
   Theme,
 } from "@material-ui/core";
-import { role } from "../constants/roles";
+import { role } from "../../constants/roles";
 
 interface ICommentProps {
   comment: IComment;

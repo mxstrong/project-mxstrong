@@ -11,13 +11,13 @@ import {
   TextField,
   CardActionArea,
 } from "@material-ui/core";
-import { AppState } from "../reducers";
+import { AppState } from "../../reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { Redirect } from "react-router-dom";
-import { fetchCurrentPost, fetchComments } from "../actions";
-import { IComment } from "../helpers/types";
-import { role } from "../constants/roles";
-import { ADD_COMMENT_URL } from "../constants/urls";
+import { fetchCurrentPost, fetchComments } from "../../actions/posts";
+import { IComment } from "../../helpers/types";
+import { role } from "../../constants/roles";
+import { ADD_COMMENT_URL } from "../../constants/urls";
 
 import Comment, { IState } from "./Comment";
 

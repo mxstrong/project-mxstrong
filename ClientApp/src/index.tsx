@@ -10,7 +10,6 @@ import { rootReducer } from "./reducers";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
-import { CookiesProvider } from "react-cookie";
 
 const composeEnhancers = composeWithDevTools({ trace: true });
 
@@ -23,13 +22,11 @@ const theme = createMuiTheme();
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <CookiesProvider>
-        <Router>
-          <ThemeProvider theme={theme}>
-            <App />
-          </ThemeProvider>
-        </Router>
-      </CookiesProvider>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <App />
+        </ThemeProvider>
+      </Router>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")
