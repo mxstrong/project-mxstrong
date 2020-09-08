@@ -19,8 +19,9 @@ import { fetchPosts, fetchCurrentPost } from "../../actions/posts";
 import { AppState } from "../../reducers";
 import { IPost } from "../../helpers/types";
 import { Link, useHistory } from "react-router-dom";
-import { DELETE_POST_URL } from "../../constants/urls";
+import { POSTS_URL } from "../../constants/urls";
 import { role } from "../../constants/roles";
+import AuthenticationDialog from "../AuthenticationDialog";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -48,15 +49,34 @@ export default function Posts() {
     dispatch(fetchPosts());
   }, []);
 
+  let history = useHistory();
+
+  const user = useSelector((state: AppState) => state.auth.user);
+
+  const [open, setOpen] = useState(false);
+
+  function handleClick() {
+    if (user.userId) {
+      history.push("/posts/add");
+    } else {
+      setOpen(true);
+    }
+  }
+
+  function handleClose() {
+    setOpen(false);
+  }
+
   const posts = useSelector((state: AppState) => state.posts.posts);
 
   return (
     <Paper className={classes.paper}>
       <Typography variant="h3">Posts</Typography>
-      <Fab component={Link} to="/posts/add" color="primary" variant="extended">
+      <Fab color="primary" variant="extended" onClick={() => handleClick()}>
         Add New Post
         <AddIcon />
       </Fab>
+      <AuthenticationDialog open={open} handleClose={handleClose} />
       {posts.map((post: IPost) => (
         <Post post={post} />
       ))}
@@ -86,7 +106,7 @@ function Post(props: IPostProps) {
   }
 
   async function handleDelete(post: IPost) {
-    const response = await fetch(DELETE_POST_URL + "/" + post.postId, {
+    const response = await fetch(POSTS_URL + "/" + post.postId, {
       method: "DELETE",
     });
     if (response.ok) {

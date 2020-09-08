@@ -4,22 +4,18 @@ import {
   Theme,
   Paper,
   Typography,
-  Card,
-  CardContent,
-  CardHeader,
   Button,
   TextField,
-  CardActionArea,
 } from "@material-ui/core";
 import { AppState } from "../../reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { fetchCurrentPost, fetchComments } from "../../actions/posts";
 import { IComment } from "../../helpers/types";
-import { role } from "../../constants/roles";
-import { ADD_COMMENT_URL } from "../../constants/urls";
+import { COMMENTS_URL } from "../../constants/urls";
 
 import Comment, { IState } from "./Comment";
+import AuthenticationDialog from "../AuthenticationDialog";
 
 const useStyles = makeStyles((theme: Theme) => ({
   post: {
@@ -45,37 +41,47 @@ export default function ViewPost(props: IProps) {
       dispatch(fetchComments(props.postId));
     }
   }, []);
-  const userToken = useSelector((state: AppState) => state.auth.user);
+  const user = useSelector((state: AppState) => state.auth.user);
   const post = useSelector((state: AppState) => state.posts.currentPost);
   const comments = useSelector((state: AppState) => state.comments.comments);
 
-  let [newComment, setNewComment] = useState<IState>({
+  const [newComment, setNewComment] = useState<IState>({
     parentId: null,
     text: "",
     postId: post ? post.postId : "",
   });
+
+  const [open, setOpen] = useState(false);
 
   if (!post) {
     return <Redirect to="/posts" />;
   }
 
   async function handleClick() {
-    const response = await fetch(ADD_COMMENT_URL, {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + userToken,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newComment),
-    });
-    if (response.ok) {
-      setNewComment({
-        parentId: null,
-        text: "",
-        postId: post ? post.postId : "",
+    if (!user.userId) {
+      setOpen(true);
+    } else {
+      const response = await fetch(COMMENTS_URL, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + user,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newComment),
       });
-      dispatch(fetchComments(post ? post.postId : ""));
+      if (response.ok) {
+        setNewComment({
+          parentId: null,
+          text: "",
+          postId: post ? post.postId : "",
+        });
+        dispatch(fetchComments(post ? post.postId : ""));
+      }
     }
+  }
+
+  function handleClose() {
+    setOpen(false);
   }
 
   return (
@@ -87,18 +93,23 @@ export default function ViewPost(props: IProps) {
       <Typography variant="body2">{post.body}</Typography>
       {newComment.parentId == null ? (
         <React.Fragment>
-          <TextField
-            variant="outlined"
-            multiline
-            placeholder="Write comment's text here"
-            value={newComment.text}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setNewComment({ ...newComment, text: event.target.value })
-            }
-          />
+          {user.userId ? (
+            <TextField
+              variant="outlined"
+              multiline
+              placeholder="Write comment's text here"
+              value={newComment.text}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setNewComment({ ...newComment, text: event.target.value })
+              }
+            />
+          ) : (
+            ""
+          )}
           <Button color="primary" onClick={handleClick}>
             Comment
-          </Button>{" "}
+          </Button>
+          <AuthenticationDialog open={open} handleClose={handleClose} />
         </React.Fragment>
       ) : (
         ""
