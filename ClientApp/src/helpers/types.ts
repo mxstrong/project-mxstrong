@@ -2,12 +2,12 @@ import {
   UPDATE_USER,
   UPDATE_POSTS,
   UPDATE_TOPICS,
-  UPDATE_PROFILE,
   UPDATE_POST,
   UPDATE_TOPIC,
   SET_CURRENT_POST,
   UPDATE_COMMENTS,
   UPDATE_GOALS,
+  SET_CURRENT_GOAL,
 } from "../actions/types";
 import { ThunkAction } from "redux-thunk";
 import { AppState } from "../reducers";
@@ -131,7 +131,27 @@ export interface IGoal {
   subGoals: IGoal[];
 }
 
+export interface IGoalFormData extends IIndexable {
+  text: string;
+  type: string;
+}
+
+export interface IAddGoalData extends IGoalFormData {
+  parentGoalId: string;
+}
+
+export interface IEditGoalData extends IAddGoalData {
+  goalId: string;
+}
+
 export interface IUpdateGoalsAction {
   type: typeof UPDATE_GOALS;
   payload: IGoal[];
 }
+
+export interface ISetCurrentGoalAction {
+  type: typeof SET_CURRENT_GOAL;
+  payload: IGoal;
+}
+
+export type GoalActionTypes = IUpdateGoalsAction | ISetCurrentGoalAction;

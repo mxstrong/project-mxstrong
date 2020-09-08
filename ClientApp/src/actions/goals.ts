@@ -1,7 +1,13 @@
-import { UPDATE_GOALS } from "./types";
-import { AppThunk, IGoal, IUpdateGoalsAction } from "../helpers/types";
+import { UPDATE_GOALS, SET_CURRENT_GOAL } from "./types";
+import {
+  AppThunk,
+  IGoal,
+  IUpdateGoalsAction,
+  ISetCurrentGoalAction,
+  IAddGoalData,
+} from "../helpers/types";
 import { Dispatch } from "redux";
-import { FETCH_GOALS_URL } from "../constants/urls";
+import { GOALS_URL } from "../constants/urls";
 
 function updateGoals(goals: IGoal[]): IUpdateGoalsAction {
   return {
@@ -10,9 +16,16 @@ function updateGoals(goals: IGoal[]): IUpdateGoalsAction {
   };
 }
 
+export function setCurrentGoal(goal: IGoal): ISetCurrentGoalAction {
+  return {
+    type: SET_CURRENT_GOAL,
+    payload: goal,
+  };
+}
+
 export function fetchGoals(): AppThunk {
   return async function (dispatch: Dispatch<IUpdateGoalsAction>) {
-    const response = await fetch(FETCH_GOALS_URL, {
+    const response = await fetch(GOALS_URL, {
       method: "GET",
     });
     if (response.ok) {
