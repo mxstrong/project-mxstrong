@@ -19,14 +19,7 @@ import {
   SET_CURRENT_POST,
 } from "./types";
 import { Dispatch } from "redux";
-import {
-  FETCH_POSTS_URL,
-  FETCH_TOPICS_URL,
-  ADD_TOPIC_URL,
-  ADD_POST_URL,
-  EDIT_POST_URL,
-  FETCH_COMMENTS_URL,
-} from "../constants/urls";
+import { POSTS_URL, TOPICS_URL, COMMENTS_URL } from "../constants/urls";
 
 function updatePosts(posts: IPost[]): IUpdatePostsAction {
   return {
@@ -65,7 +58,7 @@ export function setCurrentPost(post: IPost): ISetCurrentPostAction {
 
 export function fetchPosts(): AppThunk {
   return async function (dispatch: Dispatch<IUpdatePostsAction>) {
-    const response = await fetch(FETCH_POSTS_URL, {
+    const response = await fetch(POSTS_URL, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -78,7 +71,7 @@ export function fetchPosts(): AppThunk {
 
 export function fetchCurrentPost(postId: string): AppThunk {
   return async function (dispatch: Dispatch<ISetCurrentPostAction>) {
-    const response = await fetch(FETCH_POSTS_URL + "/" + postId, {
+    const response = await fetch(POSTS_URL + "/" + postId, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -91,7 +84,7 @@ export function fetchCurrentPost(postId: string): AppThunk {
 
 export function fetchTopics(): AppThunk {
   return async function (dispatch: Dispatch<IUpdateTopicsAction>) {
-    const response = await fetch(FETCH_TOPICS_URL, {
+    const response = await fetch(TOPICS_URL, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -107,7 +100,7 @@ export function addNewPost(post: IPostFormData): AppThunk {
     dispatch: Dispatch<IUpdatePostsAction | IAddTopicAction>
   ) {
     if (post.topic === "other" && post.otherTopic) {
-      const response = await fetch(ADD_TOPIC_URL, {
+      const response = await fetch(TOPICS_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -128,7 +121,7 @@ export function addNewPost(post: IPostFormData): AppThunk {
       body: post.body,
     };
 
-    const response = await fetch(ADD_POST_URL, {
+    const response = await fetch(POSTS_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -136,7 +129,7 @@ export function addNewPost(post: IPostFormData): AppThunk {
       body: JSON.stringify(newPost),
     });
     if (response.ok) {
-      const response = await fetch(FETCH_POSTS_URL, {
+      const response = await fetch(POSTS_URL, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -153,7 +146,7 @@ export function editPost(post: IEditPostData): AppThunk {
     dispatch: Dispatch<IAddTopicAction | IUpdatePostsAction>
   ) {
     if (post.topic === "other" && post.otherTopic) {
-      const response = await fetch(ADD_TOPIC_URL, {
+      const response = await fetch(TOPICS_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -176,7 +169,7 @@ export function editPost(post: IEditPostData): AppThunk {
       userId: post.userId,
     };
 
-    const response = await fetch(EDIT_POST_URL + "/" + post.postId, {
+    const response = await fetch(POSTS_URL + "/" + post.postId, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -185,7 +178,7 @@ export function editPost(post: IEditPostData): AppThunk {
     });
 
     if (response.ok) {
-      const response = await fetch(FETCH_POSTS_URL, {
+      const response = await fetch(POSTS_URL, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -199,7 +192,7 @@ export function editPost(post: IEditPostData): AppThunk {
 
 export function fetchComments(postId: string): AppThunk {
   return async function (dispatch: Dispatch<IUpdateCommentsAction>) {
-    const response = await fetch(FETCH_COMMENTS_URL + "/" + postId, {
+    const response = await fetch(COMMENTS_URL + "/" + postId, {
       method: "GET",
     });
     if (response.ok) {
