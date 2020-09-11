@@ -5,6 +5,7 @@ import {
   Theme,
   Typography,
   Button,
+  fade,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -16,6 +17,22 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  homeLink: {
+    color: "#ffffff",
+    textDecoration: "none",
+    "&:hover": {
+      backgroundColor: fade(
+        theme.palette.text.primary,
+        theme.palette.action.hoverOpacity
+      ),
+      "@media (hover: none)": {
+        backgroundColor: "transparent",
+      },
+      "&$disabled": {
+        backgroundColor: "transparent",
+      },
+    },
   },
   title: {
     flexGrow: 0.2,
@@ -58,16 +75,18 @@ export default function Header() {
   }
   return (
     <AppBar position="static" className={classes.header}>
-      <Typography variant="h4" className={classes.title}>
-        Project Mxstrong
-      </Typography>
+      <Link color="inherit" className={classes.homeLink} to="/">
+        <Typography variant="h4" className={classes.title}>
+          Project Mxstrong
+        </Typography>
+      </Link>
       <Link
         color="inherit"
         className={classes.menuItem}
-        to="/"
+        to="/posts"
         component={Button}
       >
-        Home
+        Posts
       </Link>
       <Link
         color="inherit"
