@@ -8,6 +8,7 @@ import {
   UPDATE_COMMENTS,
   UPDATE_GOALS,
   SET_CURRENT_GOAL,
+  SET_PARENT_GOAL,
 } from "../actions/types";
 import { ThunkAction } from "redux-thunk";
 import { AppState } from "../reducers";
@@ -154,4 +155,12 @@ export interface ISetCurrentGoalAction {
   payload: IGoal;
 }
 
-export type GoalActionTypes = IUpdateGoalsAction | ISetCurrentGoalAction;
+export interface ISetParentGoalAction {
+  type: typeof SET_PARENT_GOAL;
+  payload: IGoal;
+}
+
+export type GoalActionTypes =
+  | IUpdateGoalsAction
+  | ISetCurrentGoalAction
+  | ISetParentGoalAction;

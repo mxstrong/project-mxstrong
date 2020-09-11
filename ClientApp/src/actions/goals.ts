@@ -1,10 +1,10 @@
-import { UPDATE_GOALS, SET_CURRENT_GOAL } from "./types";
+import { UPDATE_GOALS, SET_CURRENT_GOAL, SET_PARENT_GOAL } from "./types";
 import {
   AppThunk,
   IGoal,
   IUpdateGoalsAction,
   ISetCurrentGoalAction,
-  IAddGoalData,
+  ISetParentGoalAction,
 } from "../helpers/types";
 import { Dispatch } from "redux";
 import { GOALS_URL } from "../constants/urls";
@@ -19,6 +19,13 @@ function updateGoals(goals: IGoal[]): IUpdateGoalsAction {
 export function setCurrentGoal(goal: IGoal): ISetCurrentGoalAction {
   return {
     type: SET_CURRENT_GOAL,
+    payload: goal,
+  };
+}
+
+export function setParentGoal(goal: IGoal): ISetParentGoalAction {
+  return {
+    type: SET_PARENT_GOAL,
     payload: goal,
   };
 }
