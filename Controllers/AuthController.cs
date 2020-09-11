@@ -93,7 +93,7 @@ namespace Mxstrong.Controllers
       var token = tokenHandler.CreateToken(tokenDescriptor);
       var tokenString = tokenHandler.WriteToken(token);
 
-      HttpContext.Response.Cookies.Append("JWT", tokenString, new CookieOptions { HttpOnly = true });
+      HttpContext.Response.Cookies.Append("JWT", tokenString, new CookieOptions { HttpOnly = true, Expires = DateTime.Now.AddDays(7) });
       return Ok();
     }
 
