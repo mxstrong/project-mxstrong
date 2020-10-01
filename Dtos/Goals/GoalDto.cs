@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Mxstrong.Dtos
 {
@@ -6,9 +9,6 @@ namespace Mxstrong.Dtos
   {
     public string GoalId { get; set; }
     public string Text { get; set; }
-    public string Type { get; set; }
-    public int Progress { get; set; }
     public string ParentGoalId { get; set; }
-    public List<GoalDto> SubGoals { get; set; }
   }
 }

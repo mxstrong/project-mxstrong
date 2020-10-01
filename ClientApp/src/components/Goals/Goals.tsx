@@ -30,6 +30,11 @@ export default function Goals() {
   }, []);
 
   const goals = useSelector((state: AppState) => state.goals.goals);
+  const user = useSelector((state: AppState) => state.auth.user);
+
+  if (!user.userId) {
+    return null;
+  }
 
   return (
     <Paper className={classes.paper}>
@@ -38,7 +43,7 @@ export default function Goals() {
       <List>
         {goals
           ? goals.map((goal) => (
-              <React.Fragment>
+              <React.Fragment key={goal.goalId}>
                 <Goal goal={goal} parentGoalId={null} />
                 <Divider />
               </React.Fragment>

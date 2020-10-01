@@ -88,14 +88,18 @@ export default function Header() {
       >
         Posts
       </Link>
-      <Link
-        color="inherit"
-        className={classes.menuItem}
-        to="/goals"
-        component={Button}
-      >
-        Goals
-      </Link>
+      {user.userId ? (
+        <Link
+          color="inherit"
+          className={classes.menuItem}
+          to="/goals"
+          component={Button}
+        >
+          Goals
+        </Link>
+      ) : (
+        ""
+      )}
       {renderLoginButton()}
     </AppBar>
   );

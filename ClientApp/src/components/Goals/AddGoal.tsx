@@ -15,7 +15,6 @@ export default function AddGoal() {
   const [openAuthenticate, setOpenAuthenticate] = React.useState(false);
 
   const user = useSelector((state: AppState) => state.auth.user);
-  const parentGoal = useSelector((state: AppState) => state.goals.parentGoal);
 
   const dispatch = useDispatch();
 
