@@ -11,7 +11,7 @@ using Mxstrong.Models;
 
 namespace Mxstrong.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/goals/[controller]")]
     [ApiController]
     public class CheckBoxesController : ControllerBase
     {

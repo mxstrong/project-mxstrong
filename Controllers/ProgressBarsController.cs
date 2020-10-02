@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace Mxstrong.Controllers
 {
-  [Route("api/[controller]")]
+  [Route("api/goals/[controller]")]
   [ApiController]
   public class ProgressBarsController : ControllerBase
   {
