@@ -1,4 +1,4 @@
 export const goalTypes = {
-  checkBox: "Checkbox",
+  checkbox: "Checkbox",
   progressBar: "Progress bar",
 };

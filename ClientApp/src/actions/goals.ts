@@ -1,43 +1,73 @@
-import { UPDATE_GOALS, SET_CURRENT_GOAL, SET_PARENT_GOAL } from "./types";
+import {
+  SET_CURRENT_GOAL,
+  SET_PARENT_GOAL,
+  UPDATE_CHECKBOXES,
+  UPDATE_PROGRESS_BARS,
+} from "./types";
 import {
   AppThunk,
-  IGoal,
-  IUpdateGoalsAction,
+  IProgressBar,
+  ICheckbox,
+  IUpdateProgressBarsAction,
+  IUpdateCheckboxesAction,
   ISetCurrentGoalAction,
   ISetParentGoalAction,
 } from "../helpers/types";
 import { Dispatch } from "redux";
-import { GOALS_URL } from "../constants/urls";
+import { PROGRESS_BARS_URL, CHECKBOXES_URL } from "../constants/urls";
 
-function updateGoals(goals: IGoal[]): IUpdateGoalsAction {
+function updateProgressBars(
+  progressBars: IProgressBar[]
+): IUpdateProgressBarsAction {
   return {
-    type: UPDATE_GOALS,
-    payload: goals,
+    type: UPDATE_PROGRESS_BARS,
+    payload: progressBars,
   };
 }
 
-export function setCurrentGoal(goal: IGoal): ISetCurrentGoalAction {
+function updateCheckboxes(checkboxes: ICheckbox[]): IUpdateCheckboxesAction {
+  return {
+    type: UPDATE_CHECKBOXES,
+    payload: checkboxes,
+  };
+}
+
+export function setCurrentGoal(
+  goal: ICheckbox | IProgressBar
+): ISetCurrentGoalAction {
   return {
     type: SET_CURRENT_GOAL,
     payload: goal,
   };
 }
 
-export function setParentGoal(goal: IGoal): ISetParentGoalAction {
+export function setParentGoal(goal: IProgressBar): ISetParentGoalAction {
   return {
     type: SET_PARENT_GOAL,
     payload: goal,
   };
 }
 
-export function fetchGoals(): AppThunk {
-  return async function (dispatch: Dispatch<IUpdateGoalsAction>) {
-    const response = await fetch(GOALS_URL, {
+export function fetchProgressBars(): AppThunk {
+  return async function (dispatch: Dispatch<IUpdateProgressBarsAction>) {
+    const response = await fetch(PROGRESS_BARS_URL, {
       method: "GET",
     });
     if (response.ok) {
-      const goals: IGoal[] = await response.json();
-      dispatch(updateGoals(goals));
+      const progressBars: IProgressBar[] = await response.json();
+      dispatch(updateProgressBars(progressBars));
+    }
+  };
+}
+
+export function fetchCheckboxes(): AppThunk {
+  return async function (dispatch: Dispatch<IUpdateCheckboxesAction>) {
+    const response = await fetch(CHECKBOXES_URL, {
+      method: "GET",
+    });
+    if (response.ok) {
+      const checkboxes: ICheckbox[] = await response.json();
+      dispatch(updateCheckboxes(checkboxes));
     }
   };
 }

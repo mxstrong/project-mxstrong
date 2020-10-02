@@ -11,9 +11,9 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { fetchGoals, setCurrentGoal } from "../../actions/goals";
-import { GOALS_URL } from "../../constants/urls";
-import { IGoal } from "../../helpers/types";
+import { fetchCheckboxes, setCurrentGoal } from "../../actions/goals";
+import { CHECKBOXES_URL } from "../../constants/urls";
+import { ICheckbox } from "../../helpers/types";
 import EditGoal from "./EditGoal";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -23,11 +23,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface IProps {
-  goal: IGoal;
+  checkbox: ICheckbox;
 }
 
 export default function CheckBox(props: IProps) {
-  const { goal } = props;
+  const { checkbox } = props;
 
   const classes = useStyles();
 
@@ -46,21 +46,21 @@ export default function CheckBox(props: IProps) {
 
   function handleClick() {}
 
-  async function handleEdit(goal: IGoal) {
+  async function handleEdit(checkbox: ICheckbox) {
     async function loadGoal() {
-      return dispatch(setCurrentGoal(goal));
+      return dispatch(setCurrentGoal(checkbox));
     }
     await loadGoal();
     setFormOpen(true);
     handleClose();
   }
 
-  async function handleDelete(goal: IGoal) {
-    const response = await fetch(GOALS_URL + "/" + goal.goalId, {
+  async function handleDelete(checkbox: ICheckbox) {
+    const response = await fetch(CHECKBOXES_URL + "/" + checkbox.goalId, {
       method: "DELETE",
     });
     if (response.ok) {
-      dispatch(fetchGoals());
+      dispatch(fetchCheckboxes());
     }
     handleClose();
   }
@@ -68,8 +68,8 @@ export default function CheckBox(props: IProps) {
   return (
     <ListItem button onClick={handleClick}>
       <FormControlLabel
-        control={<Checkbox checked={goal.progress === 100} color="primary" />}
-        label={goal.text}
+        control={<Checkbox checked={checkbox.checked} color="primary" />}
+        label={checkbox.text}
       />
       <IconButton aria-label="settings" onClick={handleOpen}>
         <MoreVertIcon />
@@ -81,8 +81,8 @@ export default function CheckBox(props: IProps) {
         onClose={handleClose}
         className={classes.menu}
       >
-        <MenuItem onClick={() => handleEdit(goal)}>Edit</MenuItem>
-        <MenuItem onClick={() => handleDelete(goal)}>Delete</MenuItem>
+        <MenuItem onClick={() => handleEdit(checkbox)}>Edit</MenuItem>
+        <MenuItem onClick={() => handleDelete(checkbox)}>Delete</MenuItem>
       </Menu>
       <EditGoal formOpen={formOpen} setFormOpen={setFormOpen} />
     </ListItem>

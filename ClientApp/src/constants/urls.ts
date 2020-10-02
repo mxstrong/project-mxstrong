@@ -10,4 +10,6 @@ export const LOGOUT_URL = BASE_URL + "/api/auth/logout";
 export const POSTS_URL = BASE_URL + "/api/posts";
 export const TOPICS_URL = BASE_URL + "/api/topics";
 export const COMMENTS_URL = BASE_URL + "/api/comments";
-export const GOALS_URL = BASE_URL + "/api/goals";
+const GOALS_URL = BASE_URL + "/api/goals";
+export const PROGRESS_BARS_URL = GOALS_URL + "/progressBars";
+export const CHECKBOXES_URL = GOALS_URL + "/checkboxes";

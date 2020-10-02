@@ -6,9 +6,10 @@ import AddIcon from "@material-ui/icons/Add";
 import { AppState } from "../../reducers";
 import { useSelector, useDispatch } from "react-redux";
 import AuthenticationDialog from "../AuthenticationDialog";
-import { GOALS_URL } from "../../constants/urls";
-import { fetchGoals } from "../../actions/goals";
+import { CHECKBOXES_URL, PROGRESS_BARS_URL } from "../../constants/urls";
 import { FormikHelpers } from "formik";
+import { fetchCheckboxes, fetchProgressBars } from "../../actions/goals";
+import { goalTypes } from "../../constants/goalTypes";
 
 export default function AddGoal() {
   const [openAddGoal, setOpenAddGoal] = React.useState(false);
@@ -36,10 +37,13 @@ export default function AddGoal() {
     { setSubmitting }: FormikHelpers<IGoalFormData>
   ) {
     const goal = {
-      ...values,
+      text: values.text,
       parentGoalId: null,
     };
-    const response = await fetch(GOALS_URL, {
+
+    const url =
+      values.type === goalTypes.checkbox ? CHECKBOXES_URL : PROGRESS_BARS_URL;
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -48,7 +52,9 @@ export default function AddGoal() {
     });
 
     if (response.ok) {
-      dispatch(fetchGoals());
+      values.type === goalTypes.checkbox
+        ? dispatch(fetchCheckboxes())
+        : dispatch(fetchProgressBars);
     }
     setSubmitting(false);
     handleClose();

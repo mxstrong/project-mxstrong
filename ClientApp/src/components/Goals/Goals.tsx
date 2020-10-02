@@ -8,7 +8,7 @@ import {
   Divider,
 } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchGoals } from "../../actions/goals";
+import { fetchCheckboxes, fetchProgressBars } from "../../actions/goals";
 import { AppState } from "../../reducers";
 import AddGoal from "./AddGoal";
 import Goal from "./Goal";
@@ -26,7 +26,8 @@ export default function Goals() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchGoals());
+    dispatch(fetchProgressBars());
+    dispatch(fetchCheckboxes());
   }, []);
 
   const goals = useSelector((state: AppState) => state.goals.goals);
@@ -41,10 +42,18 @@ export default function Goals() {
       <Typography variant="h3">Goals</Typography>
       <AddGoal />
       <List>
-        {goals
-          ? goals.map((goal) => (
-              <React.Fragment key={goal.goalId}>
-                <Goal goal={goal} parentGoalId={null} />
+        {goals.checkboxes
+          ? goals.checkboxes.map((checkbox) => (
+              <React.Fragment key={checkbox.goalId}>
+                <Goal goal={checkbox} parentGoalId={null} />
+                <Divider />
+              </React.Fragment>
+            ))
+          : "There are no goals yet"}
+        {goals.progressBars
+          ? goals.progressBars.map((progressBar) => (
+              <React.Fragment key={progressBar.goalId}>
+                <Goal goal={progressBar} parentGoalId={null} />
                 <Divider />
               </React.Fragment>
             ))

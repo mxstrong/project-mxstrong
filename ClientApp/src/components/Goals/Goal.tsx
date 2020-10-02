@@ -1,11 +1,11 @@
 import React from "react";
 import { goalTypes } from "../../constants/goalTypes";
-import { IGoal } from "../../helpers/types";
+import { IProgressBar, ICheckbox } from "../../helpers/types";
 import CheckBox from "./CheckBox";
 import ProgressBar from "./ProgressBar";
 
 interface IProps {
-  goal: IGoal;
+  goal: IProgressBar | ICheckbox;
   parentGoalId: string | null;
 }
 
@@ -14,9 +14,9 @@ export default function Goal(props: IProps) {
   if (goal.parentGoalId !== null && parentGoalId !== goal.parentGoalId) {
     return <React.Fragment></React.Fragment>;
   }
-  if (goal.type === goalTypes.progressBar) {
-    return <ProgressBar goal={goal} />;
+  if ("progress" in goal) {
+    return <ProgressBar progressBar={goal} />;
   } else {
-    return <CheckBox goal={goal} />;
+    return <CheckBox checkbox={goal} />;
   }
 }

@@ -1,28 +1,40 @@
 import {
-  UPDATE_GOALS,
+  UPDATE_PROGRESS_BARS,
+  UPDATE_CHECKBOXES,
   SET_CURRENT_GOAL,
   SET_PARENT_GOAL,
 } from "../actions/types";
-import { GoalActionTypes, IGoal } from "../helpers/types";
+import { GoalActionTypes, IProgressBar, ICheckbox } from "../helpers/types";
 
 interface IGoalsReducer {
-  goals: IGoal[];
-  currentGoal: IGoal | null;
-  parentGoal: IGoal | null;
+  goals: {
+    progressBars: IProgressBar[];
+    checkboxes: ICheckbox[];
+  };
+  currentGoal: IProgressBar | ICheckbox | null;
+  parentGoal: IProgressBar | ICheckbox | null;
 }
 
 export const initialState: IGoalsReducer = {
-  goals: [],
+  goals: {
+    progressBars: [],
+    checkboxes: [],
+  },
   currentGoal: null,
   parentGoal: null,
 };
 
 export function goalsReducer(state = initialState, action: GoalActionTypes) {
   switch (action.type) {
-    case UPDATE_GOALS:
+    case UPDATE_PROGRESS_BARS:
       return {
         ...state,
-        goals: action.payload,
+        progressBars: action.payload,
+      };
+    case UPDATE_CHECKBOXES:
+      return {
+        ...state,
+        checkboxes: action.payload,
       };
     case SET_CURRENT_GOAL:
       return {

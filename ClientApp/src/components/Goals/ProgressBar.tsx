@@ -16,9 +16,9 @@ import {
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { fetchGoals, setCurrentGoal } from "../../actions/goals";
-import { GOALS_URL } from "../../constants/urls";
-import { IGoal } from "../../helpers/types";
+import { fetchProgressBars, setCurrentGoal } from "../../actions/goals";
+import { PROGRESS_BARS_URL } from "../../constants/urls";
+import { IProgressBar } from "../../helpers/types";
 import AddSubgoal from "./AddSubgoal";
 import EditGoal from "./EditGoal";
 import Goal from "./Goal";
@@ -33,11 +33,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface IProps {
-  goal: IGoal;
+  progressBar: IProgressBar;
 }
 
 export default function ProgressBar(props: IProps) {
-  const { goal } = props;
+  const { progressBar } = props;
 
   const classes = useStyles();
 
@@ -62,21 +62,21 @@ export default function ProgressBar(props: IProps) {
     }
   }
 
-  async function handleEdit(goal: IGoal) {
+  async function handleEdit(progressBar: IProgressBar) {
     async function loadGoal() {
-      return dispatch(setCurrentGoal(goal));
+      return dispatch(setCurrentGoal(progressBar));
     }
     await loadGoal();
     setFormOpen(true);
     handleClose();
   }
 
-  async function handleDelete(goal: IGoal) {
-    const response = await fetch(GOALS_URL + "/" + goal.goalId, {
+  async function handleDelete(progressBar: IProgressBar) {
+    const response = await fetch(PROGRESS_BARS_URL + "/" + progressBar.goalId, {
       method: "DELETE",
     });
     if (response.ok) {
-      dispatch(fetchGoals());
+      dispatch(fetchProgressBars());
     }
     handleClose();
   }
@@ -84,8 +84,8 @@ export default function ProgressBar(props: IProps) {
   return (
     <React.Fragment>
       <ListItem button onClick={handleClick}>
-        <Typography variant="h6">{goal.text}</Typography>
-        <LinearProgressWithLabel value={goal.progress} />
+        <Typography variant="h6">{progressBar.text}</Typography>
+        <LinearProgressWithLabel value={progressBar.progress} />
         <IconButton aria-label="settings" onClick={handleOpen}>
           <MoreVertIcon />
         </IconButton>
@@ -96,22 +96,22 @@ export default function ProgressBar(props: IProps) {
           onClose={handleClose}
           className={classes.menu}
         >
-          <MenuItem onClick={() => handleEdit(goal)}>Edit</MenuItem>
-          <MenuItem onClick={() => handleDelete(goal)}>Delete</MenuItem>
+          <MenuItem onClick={() => handleEdit(progressBar)}>Edit</MenuItem>
+          <MenuItem onClick={() => handleDelete(progressBar)}>Delete</MenuItem>
         </Menu>
         <EditGoal formOpen={formOpen} setFormOpen={setFormOpen} />
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List className={classes.nested}>
-          {goal.subGoals
-            ? goal.subGoals.map((subGoal) => (
+          {progressBar.subGoals
+            ? progressBar.subGoals.map((subGoal) => (
                 <React.Fragment key={subGoal.goalId}>
-                  <Goal goal={subGoal} parentGoalId={goal.goalId} />
+                  <Goal goal={subGoal} parentGoalId={progressBar.goalId} />
                   <Divider />
                 </React.Fragment>
               ))
             : ""}
-          <AddSubgoal parentGoal={goal} />
+          <AddSubgoal parentGoal={progressBar} />
         </List>
       </Collapse>
     </React.Fragment>

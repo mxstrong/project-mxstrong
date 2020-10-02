@@ -4,8 +4,9 @@ import { FormikHelpers } from "formik";
 import GoalForm from "./GoalForm";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../reducers";
-import { fetchGoals } from "../../actions/goals";
-import { GOALS_URL } from "../../constants/urls";
+import { fetchCheckboxes, fetchProgressBars } from "../../actions/goals";
+import { CHECKBOXES_URL, PROGRESS_BARS_URL } from "../../constants/urls";
+import { goalTypes } from "../../constants/goalTypes";
 
 interface IProps {
   formOpen: boolean;
@@ -29,7 +30,7 @@ export default function EditGoal(props: IProps) {
 
   const initialValues = {
     text: currentGoal.text,
-    type: currentGoal.type,
+    type: "checked" in currentGoal ? goalTypes.checkbox : "Progress bar",
   };
 
   async function handleSubmit(
@@ -42,11 +43,14 @@ export default function EditGoal(props: IProps) {
     const editedGoal: IEditGoalData = {
       goalId: currentGoal.goalId,
       text: values.text,
-      type: values.type,
+      userId: currentGoal.userId,
       parentGoalId: currentGoal.parentGoalId ? currentGoal.parentGoalId : "",
     };
 
-    const response = await fetch(GOALS_URL + "/" + editedGoal.goalId, {
+    const url =
+      values.type === goalTypes.checkbox ? CHECKBOXES_URL : PROGRESS_BARS_URL;
+
+    const response = await fetch(url + "/" + editedGoal.goalId, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -55,7 +59,9 @@ export default function EditGoal(props: IProps) {
     });
 
     if (response.ok) {
-      dispatch(fetchGoals());
+      values.type === goalTypes.checkbox
+        ? dispatch(fetchCheckboxes())
+        : dispatch(fetchProgressBars);
     }
     setSubmitting(false);
     handleClose();

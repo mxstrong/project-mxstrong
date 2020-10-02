@@ -6,7 +6,8 @@ import {
   UPDATE_TOPIC,
   SET_CURRENT_POST,
   UPDATE_COMMENTS,
-  UPDATE_GOALS,
+  UPDATE_PROGRESS_BARS,
+  UPDATE_CHECKBOXES,
   SET_CURRENT_GOAL,
   SET_PARENT_GOAL,
 } from "../actions/types";
@@ -123,13 +124,21 @@ export interface IUpdateCommentsAction {
   payload: IComment[];
 }
 
-export interface IGoal {
+interface IGoal {
   goalId: string;
   text: string;
-  type: string;
-  progress: number;
+  userId: string;
   parentGoalId: string | null;
-  subGoals: IGoal[];
+}
+
+export interface ICheckbox extends IGoal {
+  checked: boolean;
+}
+
+export interface IProgressBar extends IGoal {
+  progress: number;
+  subGoals: ICheckbox[];
+  childBars: IProgressBar[];
 }
 
 export interface IGoalFormData extends IIndexable {
@@ -141,26 +150,35 @@ export interface IAddGoalData extends IGoalFormData {
   parentGoalId: string;
 }
 
-export interface IEditGoalData extends IAddGoalData {
+export interface IEditGoalData {
+  text: string;
+  parentGoalId: string;
+  userId: string;
   goalId: string;
 }
 
-export interface IUpdateGoalsAction {
-  type: typeof UPDATE_GOALS;
-  payload: IGoal[];
+export interface IUpdateProgressBarsAction {
+  type: typeof UPDATE_PROGRESS_BARS;
+  payload: IProgressBar[];
+}
+
+export interface IUpdateCheckboxesAction {
+  type: typeof UPDATE_CHECKBOXES;
+  payload: ICheckbox[];
 }
 
 export interface ISetCurrentGoalAction {
   type: typeof SET_CURRENT_GOAL;
-  payload: IGoal;
+  payload: ICheckbox | IProgressBar;
 }
 
 export interface ISetParentGoalAction {
   type: typeof SET_PARENT_GOAL;
-  payload: IGoal;
+  payload: IProgressBar;
 }
 
 export type GoalActionTypes =
-  | IUpdateGoalsAction
+  | IUpdateProgressBarsAction
+  | IUpdateCheckboxesAction
   | ISetCurrentGoalAction
   | ISetParentGoalAction;

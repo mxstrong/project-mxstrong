@@ -9,11 +9,10 @@ import {
   DialogTitle,
   DialogContent,
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
 import { TextField } from "formik-material-ui";
-import { IGoalFormData, IGoal, IIndexable } from "../../helpers/types";
-import { GOALS_URL } from "../../constants/urls";
-import { fetchGoals } from "../../actions/goals";
+import { IGoalFormData, IProgressBar, IIndexable } from "../../helpers/types";
+import { PROGRESS_BARS_URL, CHECKBOXES_URL } from "../../constants/urls";
+import { goalTypes } from "../../constants/goalTypes";
 
 const useStyles = makeStyles((theme: Theme) => ({
   form: {
@@ -95,7 +94,7 @@ export default function GoalForm(props: IGoalFormProps) {
               >
                 <MenuItem value="">None</MenuItem>
                 <MenuItem value="Progress bar">Progress Bar</MenuItem>
-                <MenuItem value="Checkbox">Checkbox</MenuItem>
+                <MenuItem value={goalTypes.checkbox}>Checkbox</MenuItem>
               </Field>
               <div>
                 <Button

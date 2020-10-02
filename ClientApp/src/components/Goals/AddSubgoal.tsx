@@ -1,18 +1,19 @@
 import React from "react";
-import { IGoalFormData, IGoal } from "../../helpers/types";
+import { IGoalFormData, ICheckbox, IProgressBar } from "../../helpers/types";
 import GoalForm from "./GoalForm";
-import { Button, ListItem } from "@material-ui/core";
+import { ListItem } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import { AppState } from "../../reducers";
 import { useSelector, useDispatch } from "react-redux";
 import AuthenticationDialog from "../AuthenticationDialog";
-import { GOALS_URL } from "../../constants/urls";
-import { fetchGoals, setParentGoal } from "../../actions/goals";
+import { PROGRESS_BARS_URL, CHECKBOXES_URL } from "../../constants/urls";
+import { fetchProgressBars, fetchCheckboxes } from "../../actions/goals";
 import { FormikHelpers } from "formik";
 import { Redirect } from "react-router-dom";
+import { goalTypes } from "../../constants/goalTypes";
 
 interface IProps {
-  parentGoal: IGoal;
+  parentGoal: IProgressBar;
 }
 
 export default function AddSubgoal(props: IProps) {
@@ -50,10 +51,13 @@ export default function AddSubgoal(props: IProps) {
       return;
     }
     const goal = {
-      ...values,
+      text: values.text,
       parentGoalId: parentGoal.goalId,
     };
-    const response = await fetch(GOALS_URL, {
+
+    const url =
+      values.type === goalTypes.checkbox ? CHECKBOXES_URL : PROGRESS_BARS_URL;
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -62,7 +66,9 @@ export default function AddSubgoal(props: IProps) {
     });
 
     if (response.ok) {
-      dispatch(fetchGoals());
+      values.type === goalTypes.checkbox
+        ? dispatch(fetchCheckboxes())
+        : dispatch(fetchProgressBars);
     }
     setSubmitting(false);
     handleClose();
