@@ -5,6 +5,7 @@ import {
   SET_PARENT_GOAL,
 } from "../actions/types";
 import { GoalActionTypes, IProgressBar, ICheckbox } from "../helpers/types";
+import { Reducer } from "redux";
 
 interface IGoalsReducer {
   goals: {
@@ -24,17 +25,26 @@ export const initialState: IGoalsReducer = {
   parentGoal: null,
 };
 
-export function goalsReducer(state = initialState, action: GoalActionTypes) {
+export const goalsReducer: Reducer<IGoalsReducer, GoalActionTypes> = (
+  state = initialState,
+  action: GoalActionTypes
+) => {
   switch (action.type) {
     case UPDATE_PROGRESS_BARS:
       return {
         ...state,
-        progressBars: action.payload,
+        goals: {
+          ...state.goals,
+          progressBars: action.payload,
+        },
       };
     case UPDATE_CHECKBOXES:
       return {
         ...state,
-        checkboxes: action.payload,
+        goals: {
+          ...state.goals,
+          checkboxes: action.payload,
+        },
       };
     case SET_CURRENT_GOAL:
       return {
@@ -49,4 +59,4 @@ export function goalsReducer(state = initialState, action: GoalActionTypes) {
     default:
       return state;
   }
-}
+};

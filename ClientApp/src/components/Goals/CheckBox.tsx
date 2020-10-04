@@ -24,10 +24,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface IProps {
   checkbox: ICheckbox;
+  parentGoalId: string | null;
 }
 
 export default function CheckBox(props: IProps) {
-  const { checkbox } = props;
+  const { checkbox, parentGoalId } = props;
 
   const classes = useStyles();
 
@@ -63,6 +64,13 @@ export default function CheckBox(props: IProps) {
       dispatch(fetchCheckboxes());
     }
     handleClose();
+  }
+
+  if (
+    checkbox.parentGoalId !== null &&
+    parentGoalId !== checkbox.parentGoalId
+  ) {
+    return <React.Fragment></React.Fragment>;
   }
 
   return (

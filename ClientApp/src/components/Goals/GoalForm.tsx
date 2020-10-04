@@ -10,8 +10,7 @@ import {
   DialogContent,
 } from "@material-ui/core";
 import { TextField } from "formik-material-ui";
-import { IGoalFormData, IProgressBar, IIndexable } from "../../helpers/types";
-import { PROGRESS_BARS_URL, CHECKBOXES_URL } from "../../constants/urls";
+import { IGoalFormData, IIndexable } from "../../helpers/types";
 import { goalTypes } from "../../constants/goalTypes";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -84,18 +83,22 @@ export default function GoalForm(props: IGoalFormProps) {
                 label="Text"
                 variant="outlined"
               />
-              <Field
-                className={classes.input}
-                name="type"
-                component={TextField}
-                label="Type"
-                variant="outlined"
-                select
-              >
-                <MenuItem value="">None</MenuItem>
-                <MenuItem value="Progress bar">Progress Bar</MenuItem>
-                <MenuItem value={goalTypes.checkbox}>Checkbox</MenuItem>
-              </Field>
+              {formType !== "Edit Goal" ? (
+                <Field
+                  className={classes.input}
+                  name="type"
+                  component={TextField}
+                  label="Type"
+                  variant="outlined"
+                  select
+                >
+                  <MenuItem value="">None</MenuItem>
+                  <MenuItem value="Progress bar">Progress Bar</MenuItem>
+                  <MenuItem value={goalTypes.checkbox}>Checkbox</MenuItem>
+                </Field>
+              ) : (
+                ""
+              )}
               <div>
                 <Button
                   className={classes.button}

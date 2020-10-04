@@ -26,7 +26,7 @@ namespace Mxstrong.Controllers
     public async Task<ActionResult<IEnumerable<ProgressBarDto>>> GetProgressBars()
     {
       var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-      var progressBars = await _context.ProgressBars.Where(pb => pb.UserId == userId).ToListAsync();
+      var progressBars = await _context.ProgressBars.Where(pb => pb.UserId == userId).Include(pb => pb.SubGoals).ToListAsync();
       var progressBarDtos = progressBars.Select(pb => ConvertProgressBarToDto(pb)).ToList();
       return progressBarDtos;
     }

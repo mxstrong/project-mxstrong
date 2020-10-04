@@ -11,7 +11,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCheckboxes, fetchProgressBars } from "../../actions/goals";
 import { AppState } from "../../reducers";
 import AddGoal from "./AddGoal";
-import Goal from "./Goal";
+import CheckBox from "./CheckBox";
+import ProgressBar from "./ProgressBar";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -42,22 +43,25 @@ export default function Goals() {
       <Typography variant="h3">Goals</Typography>
       <AddGoal />
       <List>
+        {!goals.checkboxes && !goals.progressBars
+          ? "There are no gaols yet."
+          : ""}
         {goals.checkboxes
           ? goals.checkboxes.map((checkbox) => (
               <React.Fragment key={checkbox.goalId}>
-                <Goal goal={checkbox} parentGoalId={null} />
+                <CheckBox checkbox={checkbox} parentGoalId={null} />
                 <Divider />
               </React.Fragment>
             ))
-          : "There are no goals yet"}
+          : ""}
         {goals.progressBars
           ? goals.progressBars.map((progressBar) => (
               <React.Fragment key={progressBar.goalId}>
-                <Goal goal={progressBar} parentGoalId={null} />
+                <ProgressBar progressBar={progressBar} parentGoalId={null} />
                 <Divider />
               </React.Fragment>
             ))
-          : "There are no goals yet"}
+          : ""}
       </List>
     </Paper>
   );

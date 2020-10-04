@@ -20,8 +20,8 @@ import { fetchProgressBars, setCurrentGoal } from "../../actions/goals";
 import { PROGRESS_BARS_URL } from "../../constants/urls";
 import { IProgressBar } from "../../helpers/types";
 import AddSubgoal from "./AddSubgoal";
+import CheckBox from "./CheckBox";
 import EditGoal from "./EditGoal";
-import Goal from "./Goal";
 
 const useStyles = makeStyles((theme: Theme) => ({
   nested: {
@@ -34,10 +34,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface IProps {
   progressBar: IProgressBar;
+  parentGoalId: string | null;
 }
 
 export default function ProgressBar(props: IProps) {
-  const { progressBar } = props;
+  const { progressBar, parentGoalId } = props;
 
   const classes = useStyles();
 
@@ -81,6 +82,13 @@ export default function ProgressBar(props: IProps) {
     handleClose();
   }
 
+  if (
+    progressBar.parentGoalId !== null &&
+    parentGoalId !== progressBar.parentGoalId
+  ) {
+    return <React.Fragment></React.Fragment>;
+  }
+
   return (
     <React.Fragment>
       <ListItem button onClick={handleClick}>
@@ -106,7 +114,21 @@ export default function ProgressBar(props: IProps) {
           {progressBar.subGoals
             ? progressBar.subGoals.map((subGoal) => (
                 <React.Fragment key={subGoal.goalId}>
-                  <Goal goal={subGoal} parentGoalId={progressBar.goalId} />
+                  <CheckBox
+                    checkbox={subGoal}
+                    parentGoalId={progressBar.goalId}
+                  />
+                  <Divider />
+                </React.Fragment>
+              ))
+            : ""}
+          {progressBar.childBars
+            ? progressBar.childBars.map((childBar) => (
+                <React.Fragment key={childBar.goalId}>
+                  <ProgressBar
+                    progressBar={childBar}
+                    parentGoalId={progressBar.goalId}
+                  />
                   <Divider />
                 </React.Fragment>
               ))
