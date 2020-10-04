@@ -10,6 +10,7 @@ namespace Mxstrong.Models
     public string Text { get; set; }
     [Required]
     public string UserId { get; set; }
+    public User User { get; set; }
     public string ParentGoalId { get; set; }
     public ProgressBar ParentGoal { get; set; }
   }
