@@ -12,6 +12,8 @@ namespace Mxstrong.Models
     public string Text { get; set; }
     [Required]
     public DateTime CreatedAt { get; set; }
+    [Required]
+    public DateTime UpdatedAt { get; set; }
     public string ParentId { get; set; }
     public Comment Parent { get; set; }
     public List<Comment> Children { get; set; }

@@ -37,9 +37,6 @@ namespace Mxstrong.Controllers
         return checkboxDtos;
       }
 
-      // PUT: api/Goals/5
-      // To protect from overposting attacks, enable the specific properties you want to bind to, for
-      // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
       [HttpPut("{id}")]
       public async Task<IActionResult> EditCheckBox(string id, EditGoalDto goalDto)
       {
@@ -51,6 +48,7 @@ namespace Mxstrong.Controllers
         var checkbox = await _context.CheckBoxes.FindAsync(id);
 
         checkbox.Text = goalDto.Text;
+        checkbox.UpdatedAt = DateTime.Now;
 
         _context.Entry(checkbox).State = EntityState.Modified;
 
@@ -73,9 +71,6 @@ namespace Mxstrong.Controllers
         return NoContent();
       }
 
-      // POST: api/Goals
-      // To protect from overposting attacks, enable the specific properties you want to bind to, for
-      // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
       [HttpPost]
       public async Task<ActionResult<Goal>> AddCheckBox(AddGoalDto goalDto)
       {
@@ -86,7 +81,9 @@ namespace Mxstrong.Controllers
           Text = goalDto.Text,
           Checked = false,
           UserId = userId,
-          ParentGoalId = goalDto.ParentGoalId
+          ParentGoalId = goalDto.ParentGoalId,
+          CreatedAt = DateTime.Now,
+          UpdatedAt = DateTime.Now
         };
 
         _context.CheckBoxes.Add(checkBox);

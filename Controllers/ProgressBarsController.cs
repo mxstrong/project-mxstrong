@@ -21,7 +21,6 @@ namespace Mxstrong.Controllers
       _context = context;
     }
 
-    // GET: api/Goals
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProgressBarDto>>> GetProgressBars()
     {
@@ -31,10 +30,6 @@ namespace Mxstrong.Controllers
       return progressBarDtos;
     }
 
-
-    // PUT: api/Goals/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to, for
-    // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
     [HttpPut("{id}")]
     public async Task<IActionResult> EditProgressBar(string id, EditGoalDto goalDto)
     {
@@ -46,6 +41,7 @@ namespace Mxstrong.Controllers
       var progressBar = await _context.ProgressBars.FindAsync(id);
 
       progressBar.Text = goalDto.Text;
+      progressBar.UpdatedAt = DateTime.Now;
 
       _context.Entry(progressBar).State = EntityState.Modified;
 
@@ -68,9 +64,6 @@ namespace Mxstrong.Controllers
       return NoContent();
     }
 
-    // POST: api/Goals
-    // To protect from overposting attacks, enable the specific properties you want to bind to, for
-    // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
     [HttpPost]
     public async Task<ActionResult<Goal>> AddProgressBar(AddGoalDto goalDto)
     {
@@ -81,7 +74,9 @@ namespace Mxstrong.Controllers
         Text = goalDto.Text,
         Progress = 0,
         UserId = userId,
-        ParentGoalId = goalDto.ParentGoalId
+        ParentGoalId = goalDto.ParentGoalId,
+        CreatedAt = DateTime.Now,
+        UpdatedAt = DateTime.Now
       };
 
       _context.ProgressBars.Add(progressBar);
@@ -104,7 +99,6 @@ namespace Mxstrong.Controllers
       return CreatedAtAction("AddProgressBar", progressBar);
     }
 
-    // DELETE: api/Goals/5
     [HttpDelete("{id}")]
     public async Task<ActionResult<Goal>> DeleteProgressBar(string id)
     {
