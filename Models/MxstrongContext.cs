@@ -13,6 +13,7 @@ namespace Mxstrong.Models
     public DbSet<Comment> Comments { get; set; }
     public DbSet<ProgressBar> ProgressBars { get; set; }
     public DbSet<CheckBox> CheckBoxes { get; set; }
+    public DbSet<DayCounter> DayCounters { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       modelBuilder.Entity<Goal>().ToTable("Goals");
