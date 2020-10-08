@@ -63,6 +63,8 @@ export default function AddGoal() {
   const initialValues = {
     text: "",
     type: "",
+    startingDate: new Date(),
+    dayGoal: 0,
   };
 
   const formType = "Add New Goal";

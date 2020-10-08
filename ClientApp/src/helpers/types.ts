@@ -10,13 +10,14 @@ import {
   UPDATE_CHECKBOXES,
   SET_CURRENT_GOAL,
   SET_PARENT_GOAL,
+  UPDATE_DAY_COUNTERS,
 } from "../actions/types";
 import { ThunkAction } from "redux-thunk";
 import { AppState } from "../reducers";
 import { Action } from "redux";
 
 export interface IIndexable {
-  [key: string]: string;
+  [key: string]: string | number | Date;
 }
 
 export interface IUserLoginData extends IIndexable {
@@ -137,13 +138,21 @@ export interface ICheckbox extends IGoal {
 
 export interface IProgressBar extends IGoal {
   progress: number;
+  dayCounters: IDayCounter[];
   subGoals: ICheckbox[];
   childBars: IProgressBar[];
+}
+
+export interface IDayCounter extends IGoal {
+  startingDate: string;
+  dayGoal: number;
 }
 
 export interface IGoalFormData extends IIndexable {
   text: string;
   type: string;
+  startingDate: Date;
+  dayGoal: number;
 }
 
 export interface IAddGoalData extends IGoalFormData {
@@ -152,9 +161,14 @@ export interface IAddGoalData extends IGoalFormData {
 
 export interface IEditGoalData {
   text: string;
-  parentGoalId: string;
-  userId: string;
+  parentGoalId?: string;
   goalId: string;
+}
+
+export interface IEditDayCounterData extends IEditGoalData {
+  parentGoalId?: string;
+  startingDate: Date;
+  dayGoal: number;
 }
 
 export interface IUpdateProgressBarsAction {
@@ -167,9 +181,14 @@ export interface IUpdateCheckboxesAction {
   payload: ICheckbox[];
 }
 
+export interface IUpdateDayCountersAction {
+  type: typeof UPDATE_DAY_COUNTERS;
+  payload: IDayCounter[];
+}
+
 export interface ISetCurrentGoalAction {
   type: typeof SET_CURRENT_GOAL;
-  payload: ICheckbox | IProgressBar;
+  payload: ICheckbox | IProgressBar | IDayCounter;
 }
 
 export interface ISetParentGoalAction {
@@ -180,5 +199,6 @@ export interface ISetParentGoalAction {
 export type GoalActionTypes =
   | IUpdateProgressBarsAction
   | IUpdateCheckboxesAction
+  | IUpdateDayCountersAction
   | ISetCurrentGoalAction
   | ISetParentGoalAction;

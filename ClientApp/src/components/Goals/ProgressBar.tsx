@@ -111,6 +111,17 @@ export default function ProgressBar(props: IProps) {
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List className={classes.nested}>
+          {progressBar.dayCounters
+            ? progressBar.dayCounters.map((dayCounter) => (
+                <React.Fragment key={dayCounter.goalId}>
+                  <DayCounter
+                    dayCounter={dayCounter}
+                    parentGoalId={progressBar.goalId}
+                  />
+                  <Divider />
+                </React.Fragment>
+              ))
+            : ""}
           {progressBar.subGoals
             ? progressBar.subGoals.map((subGoal) => (
                 <React.Fragment key={subGoal.goalId}>

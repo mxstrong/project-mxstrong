@@ -13,6 +13,7 @@ import { AppState } from "../../reducers";
 import AddGoal from "./AddGoal";
 import CheckBox from "./CheckBox";
 import ProgressBar from "./ProgressBar";
+import DayCounter from "./DayCounter";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -43,8 +44,16 @@ export default function Goals() {
       <Typography variant="h3">Goals</Typography>
       <AddGoal />
       <List>
-        {!goals.checkboxes && !goals.progressBars
+        {!goals.checkboxes && !goals.progressBars && !goals.dayCounters
           ? "There are no gaols yet."
+          : ""}
+        {goals.dayCounters
+          ? goals.dayCounters.map((dayCounter) => (
+              <React.Fragment key={dayCounter.goalId}>
+                <DayCounter dayCounter={dayCounter} parentGoalId={null} />
+                <Divider />
+              </React.Fragment>
+            ))
           : ""}
         {goals.checkboxes
           ? goals.checkboxes.map((checkbox) => (

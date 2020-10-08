@@ -12,6 +12,7 @@ import {
 import { TextField } from "formik-material-ui";
 import { IGoalFormData, IIndexable } from "../../helpers/types";
 import { goalTypes } from "../../constants/goalTypes";
+import { DatePicker } from "formik-material-ui-pickers";
 
 const useStyles = makeStyles((theme: Theme) => ({
   form: {
@@ -74,7 +75,7 @@ export default function GoalForm(props: IGoalFormProps) {
           onSubmit={handleSubmit}
           validate={validate}
         >
-          {({ isSubmitting }) => (
+          {({ isSubmitting, values }) => (
             <Form className={classes.form}>
               <Field
                 className={classes.input}
@@ -96,6 +97,15 @@ export default function GoalForm(props: IGoalFormProps) {
                   <MenuItem value="Progress bar">Progress Bar</MenuItem>
                   <MenuItem value={goalTypes.checkbox}>Checkbox</MenuItem>
                 </Field>
+              ) : (
+                ""
+              )}
+              {values.type === "Day counter" ? (
+                <Field
+                  component={DatePicker}
+                  name="startingDate"
+                  label="Starting Date"
+                />
               ) : (
                 ""
               )}

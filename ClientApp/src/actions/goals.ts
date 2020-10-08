@@ -2,6 +2,7 @@ import {
   SET_CURRENT_GOAL,
   SET_PARENT_GOAL,
   UPDATE_CHECKBOXES,
+  UPDATE_DAY_COUNTERS,
   UPDATE_PROGRESS_BARS,
 } from "./types";
 import {
@@ -12,9 +13,15 @@ import {
   IUpdateCheckboxesAction,
   ISetCurrentGoalAction,
   ISetParentGoalAction,
+  IDayCounter,
+  IUpdateDayCountersAction,
 } from "../helpers/types";
 import { Dispatch } from "redux";
-import { PROGRESS_BARS_URL, CHECKBOXES_URL } from "../constants/urls";
+import {
+  PROGRESS_BARS_URL,
+  CHECKBOXES_URL,
+  DAY_COUNTERS_URL,
+} from "../constants/urls";
 
 function updateProgressBars(
   progressBars: IProgressBar[]
@@ -32,8 +39,17 @@ function updateCheckboxes(checkboxes: ICheckbox[]): IUpdateCheckboxesAction {
   };
 }
 
+function updateDayCounters(
+  dayCounters: IDayCounter[]
+): IUpdateDayCountersAction {
+  return {
+    type: UPDATE_DAY_COUNTERS,
+    payload: dayCounters,
+  };
+}
+
 export function setCurrentGoal(
-  goal: ICheckbox | IProgressBar
+  goal: ICheckbox | IProgressBar | IDayCounter
 ): ISetCurrentGoalAction {
   return {
     type: SET_CURRENT_GOAL,
@@ -68,6 +84,18 @@ export function fetchCheckboxes(): AppThunk {
     if (response.ok) {
       const checkboxes: ICheckbox[] = await response.json();
       dispatch(updateCheckboxes(checkboxes));
+    }
+  };
+}
+
+export function fetchDayCounters(): AppThunk {
+  return async function (dispatch: Dispatch<IUpdateDayCountersAction>) {
+    const response = await fetch(DAY_COUNTERS_URL, {
+      method: "GET",
+    });
+    if (response.ok) {
+      const dayCounters: IDayCounter[] = await response.json();
+      dispatch(updateDayCounters(dayCounters));
     }
   };
 }

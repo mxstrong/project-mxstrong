@@ -77,6 +77,8 @@ export default function AddSubgoal(props: IProps) {
   const initialValues = {
     text: "",
     type: "",
+    startingDate: new Date(),
+    dayGoal: 0,
   };
 
   const formType = "Add Subgoal";
