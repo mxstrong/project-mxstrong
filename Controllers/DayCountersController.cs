@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Mxstrong.Dtos.Goals;
+using Mxstrong.Dtos;
 using Mxstrong.Models;
 
 namespace Mxstrong.Controllers

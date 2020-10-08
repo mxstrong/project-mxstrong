@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mxstrong.Dtos.Goals
+namespace Mxstrong.Dtos
 {
   public class AddDayCounterDto : AddGoalDto
   {

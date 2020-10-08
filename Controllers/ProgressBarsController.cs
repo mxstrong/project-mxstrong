@@ -25,7 +25,7 @@ namespace Mxstrong.Controllers
     public async Task<ActionResult<IEnumerable<ProgressBarDto>>> GetProgressBars()
     {
       var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-      var progressBars = await _context.ProgressBars.Where(pb => pb.UserId == userId).Include(pb => pb.SubGoals).ToListAsync();
+      var progressBars = await _context.ProgressBars.Where(pb => pb.UserId == userId).Include(pb => pb.SubGoals).Include(pb => pb.DayCounters).ToListAsync();
       var progressBarDtos = progressBars.Select(pb => ConvertProgressBarToDto(pb)).ToList();
       return progressBarDtos;
     }
@@ -127,6 +127,14 @@ namespace Mxstrong.Controllers
         Text = progressBar.Text,
         Progress = progressBar.Progress,
         ParentGoalId = progressBar.ParentGoalId,
+        DayCounters = progressBar.DayCounters?.Select(dayCounter => new DayCounterDto
+        {
+          GoalId = dayCounter.GoalId,
+          Text = dayCounter.Text,
+          StartingDate = dayCounter.StartingDate.ToString("yyyy-MM-dd"),
+          DayGoal = dayCounter.DayGoal,
+          ParentGoalId = dayCounter.ParentGoalId
+        }).ToList(),
         SubGoals = progressBar.SubGoals?.Select(checkbox => new CheckBoxDto
         {
           GoalId = checkbox.GoalId,

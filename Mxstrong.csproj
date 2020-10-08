@@ -48,6 +48,8 @@
     <Compile Remove="Migrations\20200810143441_AddUserRoles.Designer.cs" />
     <Compile Remove="Migrations\20201006094122_AddedDayCounter.cs" />
     <Compile Remove="Migrations\20201006094122_AddedDayCounter.Designer.cs" />
+    <Compile Remove="Migrations\20201008132648_AddDayCountersToProgressBar.cs" />
+    <Compile Remove="Migrations\20201008132648_AddDayCountersToProgressBar.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,6 +7,7 @@ namespace Mxstrong.Models
   {
     [Required]
     public int Progress { get; set; }
+    public List<DayCounter> DayCounters { get; set; }
     public List<CheckBox> SubGoals { get; set; }
     public List<ProgressBar> ChildBars { get; set; }
   }
