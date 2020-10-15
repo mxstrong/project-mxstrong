@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -72,12 +73,13 @@ namespace Mxstrong.Controllers
         {
           var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+          CultureInfo culture = CultureInfo.InvariantCulture;
           var newCounter = new DayCounter
           {
             GoalId = Guid.NewGuid().ToString(),
             Text = dayCounter.Text,
             StartingDate = dayCounter.StartingDate,
-            DayGoal = dayCounter.DayGoal,
+            DayGoal = int.Parse(dayCounter.DayGoal),
             UserId = userId,
             ParentGoalId = dayCounter.ParentGoalId,
             CreatedAt = DateTime.Now,

@@ -21,6 +21,7 @@ import { PROGRESS_BARS_URL } from "../../constants/urls";
 import { IProgressBar } from "../../helpers/types";
 import AddSubgoal from "./AddSubgoal";
 import CheckBox from "./CheckBox";
+import DayCounter from "./DayCounter";
 import EditGoal from "./EditGoal";
 
 const useStyles = makeStyles((theme: Theme) => ({

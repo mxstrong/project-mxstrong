@@ -17,7 +17,7 @@ import { AppState } from "../reducers";
 import { Action } from "redux";
 
 export interface IIndexable {
-  [key: string]: string | number | Date;
+  [key: string]: string | number | Date | null;
 }
 
 export interface IUserLoginData extends IIndexable {
@@ -155,8 +155,14 @@ export interface IGoalFormData extends IIndexable {
   dayGoal: number;
 }
 
-export interface IAddGoalData extends IGoalFormData {
-  parentGoalId: string;
+export interface IAddGoalData {
+  text: string;
+  parentGoalId: string | null;
+}
+
+export interface IAddDayCounterData extends IAddGoalData {
+  startingDate: Date;
+  dayGoal: number;
 }
 
 export interface IEditGoalData {

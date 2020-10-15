@@ -1,15 +1,28 @@
 import React from "react";
-import { IIndexable, IGoalFormData } from "../../helpers/types";
+import {
+  IGoalFormData,
+  IAddGoalData,
+  IAddDayCounterData,
+} from "../../helpers/types";
 import GoalForm from "./GoalForm";
 import { Fab } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import { AppState } from "../../reducers";
 import { useSelector, useDispatch } from "react-redux";
 import AuthenticationDialog from "../AuthenticationDialog";
-import { CHECKBOXES_URL, PROGRESS_BARS_URL } from "../../constants/urls";
+import {
+  CHECKBOXES_URL,
+  DAY_COUNTERS_URL,
+  PROGRESS_BARS_URL,
+} from "../../constants/urls";
 import { FormikHelpers } from "formik";
-import { fetchCheckboxes, fetchProgressBars } from "../../actions/goals";
+import {
+  fetchCheckboxes,
+  fetchDayCounters,
+  fetchProgressBars,
+} from "../../actions/goals";
 import { goalTypes } from "../../constants/goalTypes";
+import formatISO from "date-fns/formatISO";
 
 export default function AddGoal() {
   const [openAddGoal, setOpenAddGoal] = React.useState(false);
@@ -36,25 +49,48 @@ export default function AddGoal() {
     values: IGoalFormData,
     { setSubmitting }: FormikHelpers<IGoalFormData>
   ) {
-    const goal = {
-      text: values.text,
-      parentGoalId: null,
-    };
+    let goal: IAddGoalData | null = null;
+    let dayCounter: IAddDayCounterData | null = null;
+    if (values.type === goalTypes.dayCounter) {
+      dayCounter = {
+        text: values.text,
+        parentGoalId: null,
+        startingDate: values.startingDate,
+        dayGoal: values.dayGoal,
+      };
+      console.log(dayCounter);
+    } else {
+      goal = {
+        text: values.text,
+        parentGoalId: null,
+      };
+    }
 
-    const url =
-      values.type === goalTypes.checkbox ? CHECKBOXES_URL : PROGRESS_BARS_URL;
+    let url;
+    if (values.type === goalTypes.checkbox) {
+      url = CHECKBOXES_URL;
+    } else if (values.type === goalTypes.progressBar) {
+      url = PROGRESS_BARS_URL;
+    } else {
+      url = DAY_COUNTERS_URL;
+    }
+    console.log(JSON.stringify(goal ? goal : dayCounter));
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(goal),
+      body: JSON.stringify(goal ? goal : dayCounter),
     });
 
     if (response.ok) {
-      values.type === goalTypes.checkbox
-        ? dispatch(fetchCheckboxes())
-        : dispatch(fetchProgressBars);
+      if (values.type === goalTypes.checkbox) {
+        dispatch(fetchCheckboxes());
+      } else if (values.type === goalTypes.progressBar) {
+        dispatch(fetchProgressBars());
+      } else {
+        dispatch(fetchDayCounters());
+      }
     }
     setSubmitting(false);
     handleClose();

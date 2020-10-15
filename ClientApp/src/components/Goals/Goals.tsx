@@ -8,7 +8,11 @@ import {
   Divider,
 } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCheckboxes, fetchProgressBars } from "../../actions/goals";
+import {
+  fetchCheckboxes,
+  fetchDayCounters,
+  fetchProgressBars,
+} from "../../actions/goals";
 import { AppState } from "../../reducers";
 import AddGoal from "./AddGoal";
 import CheckBox from "./CheckBox";
@@ -30,6 +34,7 @@ export default function Goals() {
   useEffect(() => {
     dispatch(fetchProgressBars());
     dispatch(fetchCheckboxes());
+    dispatch(fetchDayCounters());
   }, []);
 
   const goals = useSelector((state: AppState) => state.goals.goals);

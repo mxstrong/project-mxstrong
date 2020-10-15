@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogContent,
 } from "@material-ui/core";
-import { TextField } from "formik-material-ui";
+import { fieldToCheckbox, TextField } from "formik-material-ui";
 import { IGoalFormData, IIndexable } from "../../helpers/types";
 import { goalTypes } from "../../constants/goalTypes";
 import { DatePicker } from "formik-material-ui-pickers";
@@ -94,18 +94,32 @@ export default function GoalForm(props: IGoalFormProps) {
                   select
                 >
                   <MenuItem value="">None</MenuItem>
-                  <MenuItem value="Progress bar">Progress Bar</MenuItem>
+                  <MenuItem value={goalTypes.progressBar}>
+                    Progress Bar
+                  </MenuItem>
                   <MenuItem value={goalTypes.checkbox}>Checkbox</MenuItem>
+                  <MenuItem value={goalTypes.dayCounter}>Day Counter</MenuItem>
                 </Field>
               ) : (
                 ""
               )}
               {values.type === "Day counter" ? (
-                <Field
-                  component={DatePicker}
-                  name="startingDate"
-                  label="Starting Date"
-                />
+                <React.Fragment>
+                  <Field
+                    className={classes.input}
+                    component={DatePicker}
+                    name="startingDate"
+                    label="Starting Date"
+                    inputVariant="outlined"
+                  />
+                  <Field
+                    className={classes.input}
+                    name="dayGoal"
+                    component={TextField}
+                    label="Day Goal"
+                    variant="outlined"
+                  />
+                </React.Fragment>
               ) : (
                 ""
               )}

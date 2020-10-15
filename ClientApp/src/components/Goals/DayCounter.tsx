@@ -10,7 +10,11 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { fetchCheckboxes, setCurrentGoal } from "../../actions/goals";
+import {
+  fetchCheckboxes,
+  fetchDayCounters,
+  setCurrentGoal,
+} from "../../actions/goals";
 import { DAY_COUNTERS_URL } from "../../constants/urls";
 import { IDayCounter } from "../../helpers/types";
 import EditGoal from "./EditGoal";
@@ -60,7 +64,7 @@ export default function DayCounter(props: IProps) {
       method: "DELETE",
     });
     if (response.ok) {
-      dispatch(fetchCheckboxes());
+      dispatch(fetchDayCounters());
     }
     handleClose();
   }
@@ -77,7 +81,9 @@ export default function DayCounter(props: IProps) {
       <Typography variant="h6">
         {dayCounter.text +
           " " +
-          differenceInDays(parseISO(dayCounter.startingDate), Date.now()) +
+          (differenceInDays(Date.now(), parseISO(dayCounter.startingDate)) > 0
+            ? differenceInDays(Date.now(), parseISO(dayCounter.startingDate))
+            : 0) +
           "/" +
           dayCounter.dayGoal}
       </Typography>

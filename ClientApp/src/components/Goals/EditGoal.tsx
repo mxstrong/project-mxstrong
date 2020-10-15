@@ -8,7 +8,11 @@ import { FormikHelpers } from "formik";
 import GoalForm from "./GoalForm";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../reducers";
-import { fetchCheckboxes, fetchProgressBars } from "../../actions/goals";
+import {
+  fetchCheckboxes,
+  fetchDayCounters,
+  fetchProgressBars,
+} from "../../actions/goals";
 import {
   CHECKBOXES_URL,
   DAY_COUNTERS_URL,
@@ -93,9 +97,13 @@ export default function EditGoal(props: IProps) {
     );
 
     if (response.ok) {
-      values.type === goalTypes.checkbox
-        ? dispatch(fetchCheckboxes())
-        : dispatch(fetchProgressBars);
+      if (values.type === goalTypes.checkbox) {
+        dispatch(fetchCheckboxes());
+      } else if (values.type === goalTypes.progressBar) {
+        dispatch(fetchProgressBars());
+      } else {
+        dispatch(fetchDayCounters());
+      }
     }
     setSubmitting(false);
     handleClose();
