@@ -22,7 +22,6 @@ namespace Mxstrong.Controllers
       _context = context;
     }
 
-    // GET: api/Topics
     [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<List<TopicDto>>> GetTopics()
@@ -34,7 +33,6 @@ namespace Mxstrong.Controllers
       }).ToListAsync();
     }
 
-    // GET: api/Topics/5
     [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<TopicDto>> GetTopic(string id)
@@ -55,9 +53,6 @@ namespace Mxstrong.Controllers
       return Ok(topicDto);
     }
 
-    // PUT: api/Topics/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to, for
-    // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
     [HttpPut("{id}")]
     public async Task<IActionResult> PutTopic(string id, Topic topic)
     {
@@ -65,6 +60,8 @@ namespace Mxstrong.Controllers
       {
         return BadRequest();
       }
+
+      topic.UpdatedAt = DateTime.Now;
 
       _context.Entry(topic).State = EntityState.Modified;
 
@@ -87,9 +84,6 @@ namespace Mxstrong.Controllers
       return NoContent();
     }
 
-    // POST: api/Topics
-    // To protect from overposting attacks, enable the specific properties you want to bind to, for
-    // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
     [HttpPost]
     public async Task<ActionResult<Topic>> PostTopic(AddTopicDto topic)
     {
@@ -103,6 +97,8 @@ namespace Mxstrong.Controllers
       {
         TopicId = Guid.NewGuid().ToString(),
         Name = topic.Name,
+        CreatedAt = DateTime.Now,
+        UpdatedAt = DateTime.Now
       };
 
       _context.Topics.Add(newTopic);
@@ -132,7 +128,6 @@ namespace Mxstrong.Controllers
       return CreatedAtAction("GetTopic", topicDto);
     }
 
-    // DELETE: api/Topics/5
     [HttpDelete("{id}")]
     public async Task<ActionResult<Topic>> DeleteTopic(string id)
     {

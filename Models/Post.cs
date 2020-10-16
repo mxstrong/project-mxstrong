@@ -15,6 +15,8 @@ namespace Mxstrong.Models
     [Required]
     public DateTime CreatedAt { get; set; }
     [Required]
+    public DateTime UpdatedAt { get; set; }
+    [Required]
     public string UserId { get; set; }
     public User User { get; set; }
     [Required]

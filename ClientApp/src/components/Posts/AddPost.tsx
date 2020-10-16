@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Paper, MenuItem, Button, makeStyles, Theme } from "@material-ui/core";
-import { editPost, fetchTopics } from "../actions";
-import {
-  ITopic,
-  IEditPostData,
-  IPostFormData,
-  IIndexable,
-} from "../helpers/types";
+import { Paper, makeStyles, Theme } from "@material-ui/core";
+import { fetchTopics, addNewPost } from "../../actions/posts";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect, Link } from "react-router-dom";
-import { AppState } from "../reducers";
-import { useCookies } from "react-cookie";
-import { Field, Form, Formik, FormikHelpers, useFormikContext } from "formik";
-import { TextField } from "formik-material-ui";
+import { AppState } from "../../reducers";
+import { IPostFormData, IIndexable } from "../../helpers/types";
+import { Redirect } from "react-router-dom";
+import { Formik, FormikHelpers } from "formik";
 import PostForm from "./PostForm";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -60,22 +53,24 @@ type IErrors = IIndexable & {
   body?: string;
 };
 
-export default function EditPost() {
+export default function AddPost() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const user = useSelector((state: AppState) => state.auth.user);
-  const [cookies] = useCookies(["user"]);
-  const userCookie = cookies["user"];
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     dispatch(fetchTopics());
   }, []);
 
-  const userToken = useSelector((state: AppState) => state.auth.user);
-  const post = useSelector((state: AppState) => state.posts.currentPost);
+  const initialValues: IPostFormData = {
+    title: "",
+    topic: "",
+    otherTopic: "",
+    body: "",
+  };
 
-  if ((!user && !userCookie) || !post) {
+  if (!user.userId) {
     return <Redirect to="/posts" />;
   }
 
@@ -86,27 +81,12 @@ export default function EditPost() {
   return (
     <Paper className={classes.paper}>
       <Formik
-        initialValues={{
-          title: post.title,
-          topic: post.topic,
-          otherTopic: "",
-          body: post.body,
-        }}
+        initialValues={initialValues}
         onSubmit={(
           values: IPostFormData,
           { setSubmitting }: FormikHelpers<IPostFormData>
         ) => {
-          const postData: IEditPostData = {
-            postId: post ? post.postId : "",
-            title: values.title,
-            topic: values.topic,
-            otherTopic: values.otherTopic,
-            body: values.body,
-            userId: post ? post.userId : "",
-            author: post ? post.author : "",
-            createdAt: post ? post.createdAt : "",
-          };
-          dispatch(editPost(postData));
+          dispatch(addNewPost(values));
           setSubmitting(false);
           setSuccess(true);
         }}

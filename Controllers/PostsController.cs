@@ -24,7 +24,6 @@ namespace Mxstrong.Controllers
       _context = context;
     }
 
-    // GET: api/Posts
     [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<List<PostDto>>> GetPosts()
@@ -41,7 +40,6 @@ namespace Mxstrong.Controllers
       }).ToListAsync();
     }
 
-    // GET: api/Posts/5
     [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<PostDto>> GetPost(string id)
@@ -65,9 +63,6 @@ namespace Mxstrong.Controllers
       return Ok(postDto);
     }
 
-    // PUT: api/Posts/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to, for
-    // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
     [HttpPut("{id}")]
     public async Task<IActionResult> PutPost(string id, EditPostDto updatedPost)
     {
@@ -87,6 +82,7 @@ namespace Mxstrong.Controllers
       post.Title = updatedPost.Title;
       post.TopicId = topic.TopicId;
       post.Body = updatedPost.Body;
+      post.UpdatedAt = DateTime.Now;
 
       try
       {
@@ -123,6 +119,7 @@ namespace Mxstrong.Controllers
         TopicId = topic.TopicId,
         UserId = userId,
         CreatedAt = DateTime.Now,
+        UpdatedAt = DateTime.Now
       };
       _context.Posts.Add(newPost);
 
@@ -156,7 +153,6 @@ namespace Mxstrong.Controllers
       return CreatedAtAction("GetPost", postDto);
     }
 
-    // DELETE: api/Posts/5
     [HttpDelete("{id}")]
     public async Task<ActionResult<Post>> DeletePost(string id)
     {

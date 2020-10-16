@@ -1,33 +1,25 @@
-import React, { useEffect, useState, useRef } from "react";
+import React from "react";
 import {
-  Typography,
-  makeStyles,
-  Theme,
-  Paper,
   Card,
   CardContent,
-  IconButton,
   CardHeader,
-  Fab,
+  IconButton,
+  makeStyles,
   Menu,
   MenuItem,
+  Theme,
+  Typography,
 } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts, fetchCurrentPost } from "../actions";
-import { AppState } from "../reducers";
-import { IPost } from "../helpers/types";
-import { Link, useHistory } from "react-router-dom";
-import { DELETE_POST_URL } from "../constants/urls";
-import { role } from "../constants/roles";
+import { useHistory, Link } from "react-router-dom";
+import { fetchCurrentPost, fetchPosts } from "../../actions/posts";
+import { POSTS_URL } from "../../constants/urls";
+import { IPost } from "../../helpers/types";
+import { AppState } from "../../reducers";
+import { role } from "../../constants/roles";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
   card: {
     width: "240px",
     margin: theme.spacing(1),
@@ -41,52 +33,30 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function Posts() {
-  const classes = useStyles();
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchPosts());
-  }, []);
-
-  const posts = useSelector((state: AppState) => state.posts.posts);
-
-  return (
-    <Paper className={classes.paper}>
-      <Typography variant="h3">Posts</Typography>
-      <Fab component={Link} to="/posts/add" color="primary" variant="extended">
-        Add New Post
-        <AddIcon />
-      </Fab>
-      {posts.map((post: IPost) => (
-        <Post post={post} />
-      ))}
-    </Paper>
-  );
-}
-
 interface IPostProps {
   post: IPost;
 }
 
-function Post(props: IPostProps) {
+export default function Post(props: IPostProps) {
   const classes = useStyles();
   const { post } = props;
 
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const dispatch = useDispatch();
+
   const user = useSelector((state: AppState) => state.auth.user);
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
   }
-
-  const dispatch = useDispatch();
 
   function handleClose() {
     setAnchorEl(null);
   }
 
   async function handleDelete(post: IPost) {
-    const response = await fetch(DELETE_POST_URL + "/" + post.postId, {
+    const response = await fetch(POSTS_URL + "/" + post.postId, {
       method: "DELETE",
     });
     if (response.ok) {

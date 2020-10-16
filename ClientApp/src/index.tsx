@@ -10,7 +10,8 @@ import { rootReducer } from "./reducers";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
-import { CookiesProvider } from "react-cookie";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 
 const composeEnhancers = composeWithDevTools({ trace: true });
 
@@ -23,13 +24,13 @@ const theme = createMuiTheme();
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <CookiesProvider>
-        <Router>
-          <ThemeProvider theme={theme}>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <App />
-          </ThemeProvider>
-        </Router>
-      </CookiesProvider>
+          </MuiPickersUtilsProvider>
+        </ThemeProvider>
+      </Router>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

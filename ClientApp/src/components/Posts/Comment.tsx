@@ -1,13 +1,9 @@
-import { IComment } from "../helpers/types";
+import { IComment } from "../../helpers/types";
 import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../reducers";
+import { AppState } from "../../reducers";
 import React, { useState } from "react";
-import {
-  EDIT_COMMENT_URL,
-  DELETE_COMMENT_URL,
-  ADD_COMMENT_URL,
-} from "../constants/urls";
-import { fetchComments } from "../actions";
+import { COMMENTS_URL } from "../../constants/urls";
+import { fetchComments } from "../../actions/posts";
 import {
   Card,
   TextField,
@@ -18,7 +14,8 @@ import {
   makeStyles,
   Theme,
 } from "@material-ui/core";
-import { role } from "../constants/roles";
+import { role } from "../../constants/roles";
+import AuthenticationDialog from "../AuthenticationDialog";
 
 interface ICommentProps {
   comment: IComment;
@@ -54,34 +51,33 @@ export default function Comment(props: ICommentProps) {
   const user = useSelector((state: AppState) => state.auth.user);
   const post = useSelector((state: AppState) => state.posts.currentPost);
 
-  let [commentToEdit, setCommentToEdit] = useState({
+  const [commentToEdit, setCommentToEdit] = useState({
     commentId: "",
     text: "",
     postId: post ? post.postId : "",
     userId: user.userId,
   });
 
-  let [newComment, setNewComment] = useState<IState>({
+  const [newComment, setNewComment] = useState<IState>({
     parentId: null,
     text: "",
     postId: post ? post.postId : "",
   });
+
+  const [open, setOpen] = useState(false);
 
   if (comment.parentId !== null && comment.parentId !== parentId) {
     return <React.Fragment></React.Fragment>;
   }
 
   async function handleEdit() {
-    const response = await fetch(
-      EDIT_COMMENT_URL + "/" + commentToEdit.commentId,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(commentToEdit),
-      }
-    );
+    const response = await fetch(COMMENTS_URL + "/" + commentToEdit.commentId, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(commentToEdit),
+    });
     if (response.ok) {
       setCommentToEdit({
         commentId: "",
@@ -94,7 +90,7 @@ export default function Comment(props: ICommentProps) {
   }
 
   async function handleDelete(commentId: string) {
-    const response = await fetch(DELETE_COMMENT_URL + "/" + commentId, {
+    const response = await fetch(COMMENTS_URL + "/" + commentId, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -106,7 +102,7 @@ export default function Comment(props: ICommentProps) {
   }
 
   async function handleClick() {
-    const response = await fetch(ADD_COMMENT_URL, {
+    const response = await fetch(COMMENTS_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -121,6 +117,10 @@ export default function Comment(props: ICommentProps) {
       });
       dispatch(fetchComments(post ? post.postId : ""));
     }
+  }
+
+  function handleClose() {
+    setOpen(false);
   }
 
   return (
@@ -193,6 +193,10 @@ export default function Comment(props: ICommentProps) {
               <Button
                 color="primary"
                 onClick={() => {
+                  if (!user.userId) {
+                    setOpen(true);
+                    return;
+                  }
                   if (newComment.parentId !== comment.commentId) {
                     setNewComment({
                       ...newComment,
@@ -208,6 +212,7 @@ export default function Comment(props: ICommentProps) {
               >
                 Reply
               </Button>
+              <AuthenticationDialog open={open} handleClose={handleClose} />
             </CardActionArea>
             {newComment.parentId == comment.commentId ? (
               <React.Fragment>

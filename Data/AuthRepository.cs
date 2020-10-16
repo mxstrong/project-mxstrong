@@ -51,6 +51,8 @@ namespace Mxstrong.Data
       user.UserId = Guid.NewGuid().ToString();
       user.PasswordHash = passwordHash;
       user.PasswordSalt = passwordSalt;
+      user.CreatedAt = DateTime.Now;
+      user.UpdatedAt = DateTime.Now;
 
       await _context.Users.AddAsync(user); // Adding the user to context of users.
       await _context.SaveChangesAsync(); // Save changes to database.
@@ -71,6 +73,7 @@ namespace Mxstrong.Data
       {
         Id = Guid.NewGuid().ToString(),
         UserId = UserId,
+        CreatedAt = DateTime.Now,
       };
 
       await _context.ActivationTokens.AddAsync(token);
@@ -113,6 +116,7 @@ namespace Mxstrong.Data
       user.Email = userProfile.Email;
       user.FullName = userProfile.FullName;
       user.Role = userProfile.Role;
+      user.UpdatedAt = DateTime.Now;
       await _context.SaveChangesAsync();
       return user;
     }

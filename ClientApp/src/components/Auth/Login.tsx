@@ -1,10 +1,10 @@
 import React from "react";
 import { makeStyles, Paper, Button, Typography } from "@material-ui/core";
 import { Link, Redirect } from "react-router-dom";
-import { IIndexable, IUserLoginData } from "../helpers/types";
-import { loginUser } from "../actions";
+import { IIndexable, IUserLoginData } from "../../helpers/types";
+import { loginUser } from "../../actions/auth";
 import { useSelector, useDispatch } from "react-redux";
-import { AppState } from "../reducers";
+import { AppState } from "../../reducers";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import { TextField } from "formik-material-ui";
 

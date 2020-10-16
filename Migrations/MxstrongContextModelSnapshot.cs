@@ -24,6 +24,9 @@ namespace Mxstrong.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -52,6 +55,9 @@ namespace Mxstrong.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -65,6 +71,41 @@ namespace Mxstrong.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Mxstrong.Models.Goal", b =>
+                {
+                    b.Property<string>("GoalId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ParentGoalId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("GoalId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Goals");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Goal");
                 });
 
             modelBuilder.Entity("Mxstrong.Models.Post", b =>
@@ -87,6 +128,9 @@ namespace Mxstrong.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -105,9 +149,15 @@ namespace Mxstrong.Migrations
                     b.Property<string>("TopicId")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("TopicId");
 
@@ -121,6 +171,9 @@ namespace Mxstrong.Migrations
 
                     b.Property<bool>("Activated")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -140,9 +193,51 @@ namespace Mxstrong.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Mxstrong.Models.CheckBox", b =>
+                {
+                    b.HasBaseType("Mxstrong.Models.Goal");
+
+                    b.Property<bool>("Checked")
+                        .HasColumnType("boolean");
+
+                    b.HasIndex("ParentGoalId");
+
+                    b.HasDiscriminator().HasValue("CheckBox");
+                });
+
+            modelBuilder.Entity("Mxstrong.Models.DayCounter", b =>
+                {
+                    b.HasBaseType("Mxstrong.Models.Goal");
+
+                    b.Property<int>("DayGoal")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("StartingDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasIndex("ParentGoalId");
+
+                    b.HasDiscriminator().HasValue("DayCounter");
+                });
+
+            modelBuilder.Entity("Mxstrong.Models.ProgressBar", b =>
+                {
+                    b.HasBaseType("Mxstrong.Models.Goal");
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("ParentGoalId");
+
+                    b.HasDiscriminator().HasValue("ProgressBar");
                 });
 
             modelBuilder.Entity("Mxstrong.Models.Comment", b =>
@@ -164,6 +259,15 @@ namespace Mxstrong.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Mxstrong.Models.Goal", b =>
+                {
+                    b.HasOne("Mxstrong.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Mxstrong.Models.Post", b =>
                 {
                     b.HasOne("Mxstrong.Models.Topic", "Topic")
@@ -177,6 +281,27 @@ namespace Mxstrong.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Mxstrong.Models.CheckBox", b =>
+                {
+                    b.HasOne("Mxstrong.Models.ProgressBar", "ParentGoal")
+                        .WithMany("SubGoals")
+                        .HasForeignKey("ParentGoalId");
+                });
+
+            modelBuilder.Entity("Mxstrong.Models.DayCounter", b =>
+                {
+                    b.HasOne("Mxstrong.Models.ProgressBar", "ParentGoal")
+                        .WithMany("DayCounters")
+                        .HasForeignKey("ParentGoalId");
+                });
+
+            modelBuilder.Entity("Mxstrong.Models.ProgressBar", b =>
+                {
+                    b.HasOne("Mxstrong.Models.ProgressBar", "ParentGoal")
+                        .WithMany("ChildBars")
+                        .HasForeignKey("ParentGoalId");
                 });
 #pragma warning restore 612, 618
         }

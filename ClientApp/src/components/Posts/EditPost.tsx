@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Paper, makeStyles, Theme, Button, MenuItem } from "@material-ui/core";
-import { fetchTopics, addNewPost } from "../actions";
+import { Paper, makeStyles, Theme } from "@material-ui/core";
+import { editPost, fetchTopics } from "../../actions/posts";
+import { IEditPostData, IPostFormData, IIndexable } from "../../helpers/types";
 import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../reducers";
-import { IPostFormData, IIndexable } from "../helpers/types";
 import { Redirect } from "react-router-dom";
-import { useCookies } from "react-cookie";
+import { AppState } from "../../reducers";
 import { Formik, FormikHelpers } from "formik";
 import PostForm from "./PostForm";
 
@@ -54,26 +53,19 @@ type IErrors = IIndexable & {
   body?: string;
 };
 
-export default function AddPost() {
+export default function EditPost() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const user = useSelector((state: AppState) => state.auth.user);
-  const [cookies] = useCookies(["user"]);
-  const userCookie = cookies["user"];
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     dispatch(fetchTopics());
   }, []);
 
-  const initialValues: IPostFormData = {
-    title: "",
-    topic: "",
-    otherTopic: "",
-    body: "",
-  };
+  const user = useSelector((state: AppState) => state.auth.user);
+  const post = useSelector((state: AppState) => state.posts.currentPost);
 
-  if (!user && !userCookie) {
+  if (!user.userId || !post) {
     return <Redirect to="/posts" />;
   }
 
@@ -84,12 +76,27 @@ export default function AddPost() {
   return (
     <Paper className={classes.paper}>
       <Formik
-        initialValues={initialValues}
+        initialValues={{
+          title: post.title,
+          topic: post.topic,
+          otherTopic: "",
+          body: post.body,
+        }}
         onSubmit={(
           values: IPostFormData,
           { setSubmitting }: FormikHelpers<IPostFormData>
         ) => {
-          dispatch(addNewPost(values));
+          const postData: IEditPostData = {
+            postId: post ? post.postId : "",
+            title: values.title,
+            topic: values.topic,
+            otherTopic: values.otherTopic,
+            body: values.body,
+            userId: post ? post.userId : "",
+            author: post ? post.author : "",
+            createdAt: post ? post.createdAt : "",
+          };
+          dispatch(editPost(postData));
           setSubmitting(false);
           setSuccess(true);
         }}

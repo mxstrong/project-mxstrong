@@ -24,7 +24,6 @@ namespace Mxstrong.Controllers
       _context = context;
     }
     
-    // GET: api/Comments/5
     [AllowAnonymous]
     [HttpGet("{postId}")]
     public async Task<ActionResult<List<CommentDto>>> GetPostsComments(string postId)
@@ -38,9 +37,6 @@ namespace Mxstrong.Controllers
       return commentDtos;
     }
 
-    // PUT: api/Comments/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to, for
-    // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
     [HttpPut("{id}")]
     public async Task<IActionResult> PutComment(string id, EditCommentDto comment)
     {
@@ -59,6 +55,7 @@ namespace Mxstrong.Controllers
       }
 
       existingComment.Text = comment.Text;
+      existingComment.UpdatedAt = DateTime.Now;
 
       try
       {
@@ -79,9 +76,6 @@ namespace Mxstrong.Controllers
       return NoContent();
     }
 
-    // POST: api/Comments
-    // To protect from overposting attacks, enable the specific properties you want to bind to, for
-    // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
     [HttpPost]
     public async Task<ActionResult<Comment>> PostComment(AddCommentDto comment)
     {
@@ -91,10 +85,11 @@ namespace Mxstrong.Controllers
       {
         CommentId = Guid.NewGuid().ToString(),
         Text = comment.Text,
-        CreatedAt = DateTime.Now,
         ParentId = comment.ParentId,
         PostId = comment.PostId,
         UserId = userId,
+        CreatedAt = DateTime.Now,
+        UpdatedAt = DateTime.Now
       };
 
       _context.Comments.Add(newComment);
@@ -117,7 +112,6 @@ namespace Mxstrong.Controllers
       return CreatedAtAction("GetComment", new { id = newComment.CommentId }, newComment);
     }
 
-    // DELETE: api/Comments/5
     [HttpDelete("{id}")]
     public async Task<ActionResult<Comment>> DeleteComment(string id)
     {
@@ -151,7 +145,7 @@ namespace Mxstrong.Controllers
         CommentId = comment.CommentId,
         Text = comment.Text,
         CreatedAt = comment.CreatedAt.ToString("yyyy-MM-dd"),
-        Children = !(comment.Children is null) ? comment.Children.Select(c => ConvertCommentToDto(c)).ToList() : null,
+        Children = comment.Children?.Select(c => ConvertCommentToDto(c)).ToList(),
         PostId = comment.PostId,
         UserId = comment.UserId,
         Author = comment.User.FullName,

@@ -2,18 +2,23 @@ import {
   UPDATE_USER,
   UPDATE_POSTS,
   UPDATE_TOPICS,
-  UPDATE_PROFILE,
   UPDATE_POST,
   UPDATE_TOPIC,
   SET_CURRENT_POST,
   UPDATE_COMMENTS,
+  UPDATE_PROGRESS_BARS,
+  UPDATE_CHECKBOXES,
+  SET_CURRENT_GOAL,
+  SET_PARENT_GOAL,
+  UPDATE_DAY_COUNTERS,
+  UPDATE_PROGRESS,
 } from "../actions/types";
 import { ThunkAction } from "redux-thunk";
 import { AppState } from "../reducers";
 import { Action } from "redux";
 
 export interface IIndexable {
-  [key: string]: string;
+  [key: string]: string | number | Date | null;
 }
 
 export interface IUserLoginData extends IIndexable {
@@ -120,3 +125,93 @@ export interface IUpdateCommentsAction {
   type: typeof UPDATE_COMMENTS;
   payload: IComment[];
 }
+
+interface IGoal {
+  goalId: string;
+  text: string;
+  userId: string;
+  parentGoalId: string | null;
+}
+
+export interface ICheckbox extends IGoal {
+  checked: boolean;
+}
+
+export interface IProgressBar extends IGoal {
+  progress: number;
+  dayCounters: IDayCounter[];
+  subGoals: ICheckbox[];
+  childBars: IProgressBar[];
+}
+
+export interface IDayCounter extends IGoal {
+  startingDate: string;
+  dayGoal: number;
+}
+
+export interface IGoalFormData extends IIndexable {
+  text: string;
+  type: string;
+  startingDate: Date;
+  dayGoal: number;
+}
+
+export interface IAddGoalData {
+  text: string;
+  parentGoalId: string | null;
+}
+
+export interface IAddDayCounterData extends IAddGoalData {
+  startingDate: Date;
+  dayGoal: number;
+}
+
+export interface IEditGoalData {
+  text: string;
+  parentGoalId?: string;
+  goalId: string;
+}
+
+export interface IEditDayCounterData extends IEditGoalData {
+  parentGoalId?: string;
+  startingDate: Date;
+  dayGoal: number;
+}
+
+export interface IUpdateProgressBarsAction {
+  type: typeof UPDATE_PROGRESS_BARS;
+  payload: IProgressBar[];
+}
+
+export interface IUpdateCheckboxesAction {
+  type: typeof UPDATE_CHECKBOXES;
+  payload: ICheckbox[];
+}
+
+export interface IUpdateDayCountersAction {
+  type: typeof UPDATE_DAY_COUNTERS;
+  payload: IDayCounter[];
+}
+
+export interface ISetCurrentGoalAction {
+  type: typeof SET_CURRENT_GOAL;
+  payload: ICheckbox | IProgressBar | IDayCounter;
+}
+
+export interface ISetParentGoalAction {
+  type: typeof SET_PARENT_GOAL;
+  payload: IProgressBar;
+}
+
+export interface IUpdateProgressAction {
+  type: typeof UPDATE_PROGRESS;
+  payload: null;
+}
+
+export type GoalActionTypes =
+  | IUpdateProgressBarsAction
+  | IUpdateCheckboxesAction
+  | IUpdateDayCountersAction
+  | ISetCurrentGoalAction
+  | ISetParentGoalAction
+  | IUpdateProgressAction;
