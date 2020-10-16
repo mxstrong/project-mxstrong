@@ -11,6 +11,7 @@ import {
   SET_CURRENT_GOAL,
   SET_PARENT_GOAL,
   UPDATE_DAY_COUNTERS,
+  UPDATE_PROGRESS,
 } from "../actions/types";
 import { ThunkAction } from "redux-thunk";
 import { AppState } from "../reducers";
@@ -202,9 +203,15 @@ export interface ISetParentGoalAction {
   payload: IProgressBar;
 }
 
+export interface IUpdateProgressAction {
+  type: typeof UPDATE_PROGRESS;
+  payload: null;
+}
+
 export type GoalActionTypes =
   | IUpdateProgressBarsAction
   | IUpdateCheckboxesAction
   | IUpdateDayCountersAction
   | ISetCurrentGoalAction
-  | ISetParentGoalAction;
+  | ISetParentGoalAction
+  | IUpdateProgressAction;

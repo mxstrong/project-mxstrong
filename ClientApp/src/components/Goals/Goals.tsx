@@ -39,6 +39,9 @@ export default function Goals() {
 
   const goals = useSelector((state: AppState) => state.goals.goals);
   const user = useSelector((state: AppState) => state.auth.user);
+  const updateProgress = useSelector(
+    (state: AppState) => state.goals.updateProgress
+  );
 
   if (!user.userId) {
     return null;
@@ -71,7 +74,11 @@ export default function Goals() {
         {goals.progressBars
           ? goals.progressBars.map((progressBar) => (
               <React.Fragment key={progressBar.goalId}>
-                <ProgressBar progressBar={progressBar} parentGoalId={null} />
+                <ProgressBar
+                  progressBar={progressBar}
+                  parentGoalId={null}
+                  updateProgress={updateProgress}
+                />
                 <Divider />
               </React.Fragment>
             ))

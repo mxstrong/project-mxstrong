@@ -11,7 +11,12 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { fetchCheckboxes, setCurrentGoal } from "../../actions/goals";
+import {
+  fetchCheckboxes,
+  fetchProgressBars,
+  setCurrentGoal,
+  updateProgress,
+} from "../../actions/goals";
 import { CHECKBOXES_URL } from "../../constants/urls";
 import { ICheckbox } from "../../helpers/types";
 import EditGoal from "./EditGoal";
@@ -32,6 +37,7 @@ export default function CheckBox(props: IProps) {
 
   const classes = useStyles();
 
+  const [checked, setChecked] = useState(checkbox.checked);
   const [formOpen, setFormOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -45,7 +51,16 @@ export default function CheckBox(props: IProps) {
     setAnchorEl(null);
   }
 
-  function handleClick() {}
+  async function handleClick() {
+    const result = await fetch(CHECKBOXES_URL + "/check/" + checkbox.goalId, {
+      method: "POST",
+    });
+    if (result.ok) {
+      dispatch(fetchCheckboxes());
+      dispatch(fetchProgressBars());
+      setChecked(!checked);
+    }
+  }
 
   async function handleEdit(checkbox: ICheckbox) {
     async function loadGoal() {
@@ -76,7 +91,7 @@ export default function CheckBox(props: IProps) {
   return (
     <ListItem button onClick={handleClick}>
       <FormControlLabel
-        control={<Checkbox checked={checkbox.checked} color="primary" />}
+        control={<Checkbox checked={checked} color="primary" />}
         label={checkbox.text}
       />
       <IconButton aria-label="settings" onClick={handleOpen}>

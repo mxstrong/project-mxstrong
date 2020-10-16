@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { fetchProgressBars, setCurrentGoal } from "../../actions/goals";
 import { PROGRESS_BARS_URL } from "../../constants/urls";
@@ -23,6 +23,9 @@ import AddSubgoal from "./AddSubgoal";
 import CheckBox from "./CheckBox";
 import DayCounter from "./DayCounter";
 import EditGoal from "./EditGoal";
+import differenceInDays from "date-fns/differenceInDays";
+import parseISO from "date-fns/parseISO";
+import { AppState } from "../../reducers";
 
 const useStyles = makeStyles((theme: Theme) => ({
   nested: {
@@ -36,18 +39,27 @@ const useStyles = makeStyles((theme: Theme) => ({
 interface IProps {
   progressBar: IProgressBar;
   parentGoalId: string | null;
+  updateProgress: boolean;
 }
 
 export default function ProgressBar(props: IProps) {
-  const { progressBar, parentGoalId } = props;
+  const { progressBar, parentGoalId, updateProgress } = props;
 
   const classes = useStyles();
+
+  const [progress, setProgress] = useState<number>(
+    calculateProgress(progressBar)
+  );
 
   const [open, setOpen] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setProgress(calculateProgress(progressBar));
+  }, [updateProgress]);
 
   function handleOpen(event: React.MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
@@ -83,6 +95,39 @@ export default function ProgressBar(props: IProps) {
     handleClose();
   }
 
+  function calculateProgress(progressBar: IProgressBar): number {
+    let childCount =
+      (progressBar.childBars ? progressBar.childBars.length : 0) +
+      (progressBar.subGoals ? progressBar.subGoals.length : 0) +
+      (progressBar.dayCounters ? progressBar.dayCounters.length : 0);
+    let completedChildCount =
+      (progressBar.childBars && progressBar.childBars.length > 0
+        ? progressBar.childBars
+            .map((childBar) => calculateProgress(childBar) / 100)
+            .reduce((sum, prog) => sum + prog)
+        : 0) +
+      (progressBar.subGoals && progressBar.subGoals.length > 0
+        ? progressBar.subGoals
+            .map((checkbox): number => (checkbox.checked ? 1 : 0))
+            .reduce((sum, prog) => sum + prog)
+        : 0) +
+      (progressBar.dayCounters && progressBar.dayCounters.length > 0
+        ? progressBar.dayCounters
+            .map((dayCounter): number =>
+              differenceInDays(Date.now(), parseISO(dayCounter.startingDate)) -
+                dayCounter.dayGoal >=
+              0
+                ? 1
+                : 0
+            )
+            .reduce((sum, prog) => sum + prog)
+        : 0);
+    if (childCount === 0) {
+      return 100;
+    }
+    return Math.round((100 / childCount) * completedChildCount);
+  }
+
   if (
     progressBar.parentGoalId !== null &&
     parentGoalId !== progressBar.parentGoalId
@@ -94,7 +139,7 @@ export default function ProgressBar(props: IProps) {
     <React.Fragment>
       <ListItem button onClick={handleClick}>
         <Typography variant="h6">{progressBar.text}</Typography>
-        <LinearProgressWithLabel value={progressBar.progress} />
+        <LinearProgressWithLabel value={progress} />
         <IconButton aria-label="settings" onClick={handleOpen}>
           <MoreVertIcon />
         </IconButton>
@@ -140,6 +185,7 @@ export default function ProgressBar(props: IProps) {
                   <ProgressBar
                     progressBar={childBar}
                     parentGoalId={progressBar.goalId}
+                    updateProgress={updateProgress}
                   />
                   <Divider />
                 </React.Fragment>

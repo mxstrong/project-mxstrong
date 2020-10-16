@@ -1,6 +1,7 @@
 import {
   SET_CURRENT_GOAL,
   SET_PARENT_GOAL,
+  UPDATE_PROGRESS,
   UPDATE_CHECKBOXES,
   UPDATE_DAY_COUNTERS,
   UPDATE_PROGRESS_BARS,
@@ -15,6 +16,7 @@ import {
   ISetParentGoalAction,
   IDayCounter,
   IUpdateDayCountersAction,
+  IUpdateProgressAction,
 } from "../helpers/types";
 import { Dispatch } from "redux";
 import {
@@ -64,14 +66,24 @@ export function setParentGoal(goal: IProgressBar): ISetParentGoalAction {
   };
 }
 
+export function updateProgress(): IUpdateProgressAction {
+  return {
+    type: UPDATE_PROGRESS,
+    payload: null,
+  };
+}
+
 export function fetchProgressBars(): AppThunk {
-  return async function (dispatch: Dispatch<IUpdateProgressBarsAction>) {
+  return async function (
+    dispatch: Dispatch<IUpdateProgressBarsAction | IUpdateProgressAction>
+  ) {
     const response = await fetch(PROGRESS_BARS_URL, {
       method: "GET",
     });
     if (response.ok) {
       const progressBars: IProgressBar[] = await response.json();
       dispatch(updateProgressBars(progressBars));
+      dispatch(updateProgress());
     }
   };
 }

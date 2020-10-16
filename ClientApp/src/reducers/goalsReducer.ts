@@ -4,6 +4,7 @@ import {
   SET_CURRENT_GOAL,
   SET_PARENT_GOAL,
   UPDATE_DAY_COUNTERS,
+  UPDATE_PROGRESS,
 } from "../actions/types";
 import {
   GoalActionTypes,
@@ -21,6 +22,7 @@ interface IGoalsReducer {
   };
   currentGoal: IProgressBar | ICheckbox | IDayCounter | null;
   parentGoal: IProgressBar | ICheckbox | IDayCounter | null;
+  updateProgress: boolean;
 }
 
 export const initialState: IGoalsReducer = {
@@ -31,6 +33,7 @@ export const initialState: IGoalsReducer = {
   },
   currentGoal: null,
   parentGoal: null,
+  updateProgress: false,
 };
 
 export const goalsReducer: Reducer<IGoalsReducer, GoalActionTypes> = (
@@ -71,6 +74,11 @@ export const goalsReducer: Reducer<IGoalsReducer, GoalActionTypes> = (
       return {
         ...state,
         parentGoal: action.payload,
+      };
+    case UPDATE_PROGRESS:
+      return {
+        ...state,
+        updateProgress: !state.updateProgress,
       };
     default:
       return state;
