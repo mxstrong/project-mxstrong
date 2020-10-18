@@ -20,6 +20,7 @@ import {
 } from "../../constants/urls";
 import { goalTypes } from "../../constants/goalTypes";
 import parseISO from "date-fns/parseISO";
+import startOfDay from "date-fns/startOfDay";
 
 interface IProps {
   formOpen: boolean;
@@ -43,12 +44,17 @@ export default function EditGoal(props: IProps) {
 
   const initialValues = {
     text: currentGoal.text,
-    type: "checked" in currentGoal ? goalTypes.checkbox : "Progress bar",
+    type:
+      "checked" in currentGoal
+        ? goalTypes.checkbox
+        : "dayGoal" in currentGoal
+        ? goalTypes.dayCounter
+        : goalTypes.progressBar,
     startingDate:
       "startingDate" in currentGoal
         ? new Date(parseISO(currentGoal.startingDate))
         : new Date(),
-    dayGoal: 0,
+    dayGoal: "dayGoal" in currentGoal ? currentGoal.dayGoal : 0,
   };
 
   async function handleSubmit(
@@ -64,7 +70,7 @@ export default function EditGoal(props: IProps) {
       editedDayCounter = {
         goalId: currentGoal.goalId,
         text: values.text,
-        startingDate: values.startingDate,
+        startingDate: startOfDay(values.startingDate),
         dayGoal: values.dayGoal,
         parentGoalId: currentGoal.parentGoalId ? currentGoal.parentGoalId : "",
       };
@@ -86,13 +92,19 @@ export default function EditGoal(props: IProps) {
     }
 
     const response = await fetch(
-      url + "/" + (editedGoal ? editedGoal.goalId : editedDayCounter?.goalId),
+      url +
+        "/" +
+        (editedGoal
+          ? editedGoal.goalId
+          : editedDayCounter
+          ? editedDayCounter.goalId
+          : ""),
       {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(editedGoal),
+        body: JSON.stringify(editedGoal ? editedGoal : editedDayCounter),
       }
     );
 

@@ -22,7 +22,7 @@ import {
   fetchProgressBars,
 } from "../../actions/goals";
 import { goalTypes } from "../../constants/goalTypes";
-import formatISO from "date-fns/formatISO";
+import startOfDay from "date-fns/startOfDay";
 
 export default function AddGoal() {
   const [openAddGoal, setOpenAddGoal] = React.useState(false);
@@ -55,10 +55,9 @@ export default function AddGoal() {
       dayCounter = {
         text: values.text,
         parentGoalId: null,
-        startingDate: values.startingDate,
+        startingDate: startOfDay(values.startingDate),
         dayGoal: values.dayGoal,
       };
-      console.log(dayCounter);
     } else {
       goal = {
         text: values.text,
@@ -74,7 +73,7 @@ export default function AddGoal() {
     } else {
       url = DAY_COUNTERS_URL;
     }
-    console.log(JSON.stringify(goal ? goal : dayCounter));
+
     const response = await fetch(url, {
       method: "POST",
       headers: {
