@@ -73,7 +73,6 @@ namespace Mxstrong.Controllers
         {
           var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-          CultureInfo culture = CultureInfo.InvariantCulture;
           var newCounter = new DayCounter
           {
             GoalId = Guid.NewGuid().ToString(),
