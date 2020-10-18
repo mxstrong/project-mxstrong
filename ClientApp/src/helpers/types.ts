@@ -138,7 +138,6 @@ export interface ICheckbox extends IGoal {
 }
 
 export interface IProgressBar extends IGoal {
-  progress: number;
   dayCounters: IDayCounter[];
   subGoals: ICheckbox[];
   childBars: IProgressBar[];
