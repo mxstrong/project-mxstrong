@@ -46,7 +46,7 @@ namespace Mxstrong.Controllers
 
           existingCounter.Text = dayCounter.Text;
           existingCounter.StartingDate = dayCounter.StartingDate;
-          existingCounter.DayGoal = dayCounter.DayGoal;
+          existingCounter.DayGoal = int.Parse(dayCounter.DayGoal);
           existingCounter.UpdatedAt = DateTime.Now;
 
           try
