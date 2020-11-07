@@ -46,7 +46,7 @@ namespace Mxstrong.Controllers
 
           existingCounter.Text = dayCounter.Text;
           existingCounter.StartingDate = dayCounter.StartingDate;
-          existingCounter.DayGoal = dayCounter.DayGoal;
+          existingCounter.DayGoal = int.Parse(dayCounter.DayGoal);
           existingCounter.UpdatedAt = DateTime.Now;
 
           try
@@ -73,7 +73,6 @@ namespace Mxstrong.Controllers
         {
           var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-          CultureInfo culture = CultureInfo.InvariantCulture;
           var newCounter = new DayCounter
           {
             GoalId = Guid.NewGuid().ToString(),
