@@ -18,7 +18,7 @@ namespace Mxstrong.Data
     public async Task<User> Login(string email, string password)
     {
       var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-      if (user == null)
+      if (user == null || !user.Registered)
       {
         return null;
       }
@@ -54,8 +54,36 @@ namespace Mxstrong.Data
       user.CreatedAt = DateTime.Now;
       user.UpdatedAt = DateTime.Now;
 
-      await _context.Users.AddAsync(user); // Adding the user to context of users.
-      await _context.SaveChangesAsync(); // Save changes to database.
+      await _context.Users.AddAsync(user); 
+      await _context.SaveChangesAsync();
+
+      return user;
+    }
+
+    public async Task<User> RegisterExistingUser(User user, string password)
+    {
+      CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+
+      user.PasswordHash = passwordHash;
+      user.PasswordSalt = passwordSalt;
+      user.Registered = true;
+      user.UpdatedAt = DateTime.Now;
+
+      await _context.SaveChangesAsync();
+
+      return user;
+    }
+
+    public async Task<User> CreateUserWithoutRegistration(User user)
+    {
+      user.UserId = Guid.NewGuid().ToString();
+      user.PasswordHash = null;
+      user.PasswordSalt = null;
+      user.CreatedAt = DateTime.Now;
+      user.UpdatedAt = DateTime.Now;
+
+      await _context.Users.AddAsync(user);
+      await _context.SaveChangesAsync();
 
       return user;
     }
@@ -118,6 +146,13 @@ namespace Mxstrong.Data
       user.Role = userProfile.Role;
       user.UpdatedAt = DateTime.Now;
       await _context.SaveChangesAsync();
+      return user;
+    }
+
+    public async Task<User> GetExistingUser(string email)
+    {
+      var user = await _context.Users.FirstAsync(user => user.Email == email);
+
       return user;
     }
   }

@@ -18,6 +18,8 @@ namespace Mxstrong.Models
     [Required]
     public bool Activated { get; set; }
     [Required]
+    public bool Registered { get; set; }
+    [Required]
     public string Role { get; set; }
     [Required]
     public DateTime CreatedAt { get; set; }

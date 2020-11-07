@@ -5,6 +5,7 @@ export const BASE_URL =
 export const CHECK_EMAIL_URL = BASE_URL + "/api/auth/emailTaken";
 export const REGISTER_URL = BASE_URL + "/api/auth/register";
 export const LOGIN_URL = BASE_URL + "/api/auth/login";
+export const GOOGLE_LOGIN_URL = LOGIN_URL + "google";
 export const CURRENT_USER_URL = BASE_URL + "/api/auth/currentUser";
 export const LOGOUT_URL = BASE_URL + "/api/auth/logout";
 export const POSTS_URL = BASE_URL + "/api/posts";

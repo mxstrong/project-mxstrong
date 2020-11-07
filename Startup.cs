@@ -35,7 +35,8 @@ namespace Mxstrong
       services.AddTransient<IEmailSender, EmailSender>();
 
       var key = Encoding.ASCII.GetBytes(Configuration["JWTSecret"]);
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
       {
         options.Events = new JwtBearerEvents
         {

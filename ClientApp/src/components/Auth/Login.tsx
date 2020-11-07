@@ -2,11 +2,13 @@ import React from "react";
 import { makeStyles, Paper, Button, Typography } from "@material-ui/core";
 import { Link, Redirect } from "react-router-dom";
 import { IIndexable, IUserLoginData } from "../../helpers/types";
-import { loginUser } from "../../actions/auth";
+import { loginUser, loginWithGoogle } from "../../actions/auth";
 import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../../reducers";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import { TextField } from "formik-material-ui";
+import GoogleLogin from "react-google-login";
+import { clientId } from "../../constants/googleClientId";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -29,7 +31,12 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(2),
   },
   button: {
-    width: "80%",
+    width: "50%",
+    margin: theme.spacing(1),
+  },
+  signInButtons: {
+    display: "flex",
+    flexDirection: "row",
   },
 }));
 
@@ -61,6 +68,14 @@ export default function LoginForm() {
   const classes = useStyles();
   const user = useSelector((state: AppState) => state.auth.user);
   const dispatch = useDispatch();
+
+  function onSignIn(googleUser: any) {
+    console.log(googleUser);
+    // const idToken = googleUser.tokenId;
+
+    // dispatch(loginWithGoogle(idToken));
+  }
+
   if (user.userId) {
     return <Redirect to="/" />;
   }
@@ -102,15 +117,27 @@ export default function LoginForm() {
               label="Password"
               variant="outlined"
             />
-            <Button
-              className={classes.button}
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={isSubmitting}
-            >
-              Login
-            </Button>
+            <div className={classes.signInButtons}>
+              <Button
+                className={classes.button}
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={isSubmitting}
+              >
+                Login
+              </Button>
+              {/* <div
+                className={"g-signin2 " + classes.button}
+                data-onsuccess={onSignIn}
+              ></div> */}
+              <GoogleLogin
+                clientId={clientId}
+                buttonText="Login"
+                onSuccess={onSignIn}
+                cookiePolicy={"single_host_origin"}
+              />
+            </div>
           </Form>
         )}
       </Formik>

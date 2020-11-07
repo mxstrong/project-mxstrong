@@ -14,6 +14,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Google.Apis.Auth;
 
 namespace Mxstrong.Controllers
 {
@@ -42,7 +43,16 @@ namespace Mxstrong.Controllers
 
       if (await _repo.UserExists(registerUserDto.Email))
       {
-        return BadRequest("Email is already taken");
+        var existingUser = await _repo.GetExistingUser(registerUserDto.Email);
+        if (existingUser.Registered)
+        {
+          return BadRequest("Email is already taken");
+        }
+        else
+        {
+          await _repo.RegisterExistingUser(existingUser, registerUserDto.Password);
+          return Ok();
+        }
       }
 
 
@@ -51,6 +61,7 @@ namespace Mxstrong.Controllers
         Email = registerUserDto.Email,
         FullName = registerUserDto.FullName,
         Activated = false,
+        Registered = true,
         Role = Role.User,
       };
 
@@ -67,13 +78,20 @@ namespace Mxstrong.Controllers
     public async Task<IActionResult> Login([FromBody] LoginDto registerUserDto)
     {
       var userFromRepo = await _repo.Login(registerUserDto.Email, registerUserDto.Password);
+
       if (userFromRepo == null)
       {
         return Unauthorized();
       }
+
       if (!userFromRepo.Activated)
       {
         return BadRequest("You need to activate your account to proceed");
+      }
+
+      if (!userFromRepo.Registered)
+      {
+        return BadRequest("You need to complete registration to proceed");
       }
 
       // generate token
@@ -94,6 +112,58 @@ namespace Mxstrong.Controllers
       var tokenString = tokenHandler.WriteToken(token);
 
       HttpContext.Response.Cookies.Append("JWT", tokenString, new CookieOptions { HttpOnly = true, Expires = DateTime.Now.AddDays(7) });
+      return Ok();
+    }
+    [HttpPost]
+    public async Task<IActionResult> LoginGoogle(string idToken)
+    {
+      new GoogleJsonWebSignature.ValidationSettings()
+      {
+        Audience = Enumerable.Repeat(_config["Authentication:Google:ClientId"], 1),
+      };
+
+      var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+      if (!payload.EmailVerified)
+      {
+        return Unauthorized();
+      }
+      User user;
+      if (await _repo.UserExists(payload.Email))
+      {
+        user = await _repo.GetExistingUser(payload.Email);
+      }
+      else
+      {
+        var userToCreate = new User
+        {
+          Email = payload.Email,
+          FullName = payload.Name,
+          Activated = true,
+          Registered = false,
+          Role = Role.User,
+        };
+
+        user = await _repo.CreateUserWithoutRegistration(userToCreate);
+      }
+
+      // generate token
+      var tokenHandler = new JwtSecurityTokenHandler();
+      var key = Encoding.ASCII.GetBytes(_config["JWTSecret"]);
+      var tokenDescriptor = new SecurityTokenDescriptor
+      {
+        Subject = new ClaimsIdentity(new Claim[]{
+          new Claim(ClaimTypes.NameIdentifier, user.UserId),
+          new Claim(ClaimTypes.Email, user.Email),
+          new Claim(ClaimTypes.Role, user.Role)
+        }),
+        Expires = DateTime.Now.AddDays(1),
+        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+      };
+
+      var token = tokenHandler.CreateToken(tokenDescriptor);
+      var tokenString = tokenHandler.WriteToken(token);
+
+      HttpContext.Response.Cookies.Append("JWT", tokenString, new CookieOptions { HttpOnly = true, Expires = DateTime.Now.AddDays(14) });
       return Ok();
     }
 
