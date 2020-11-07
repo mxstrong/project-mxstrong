@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace Mxstrong.Controllers
 
           existingCounter.Text = dayCounter.Text;
           existingCounter.StartingDate = dayCounter.StartingDate;
-          existingCounter.DayGoal = dayCounter.DayGoal;
+          existingCounter.DayGoal = int.Parse(dayCounter.DayGoal);
           existingCounter.UpdatedAt = DateTime.Now;
 
           try
@@ -71,6 +72,7 @@ namespace Mxstrong.Controllers
         public async Task<ActionResult<DayCounter>> PostDayCounter(AddDayCounterDto dayCounter)
         {
           var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
           var newCounter = new DayCounter
           {
             GoalId = Guid.NewGuid().ToString(),

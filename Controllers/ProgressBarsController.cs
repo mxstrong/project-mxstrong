@@ -72,7 +72,6 @@ namespace Mxstrong.Controllers
       {
         GoalId = Guid.NewGuid().ToString(),
         Text = goalDto.Text,
-        Progress = 0,
         UserId = userId,
         ParentGoalId = goalDto.ParentGoalId,
         CreatedAt = DateTime.Now,
@@ -125,7 +124,6 @@ namespace Mxstrong.Controllers
       {
         GoalId = progressBar.GoalId,
         Text = progressBar.Text,
-        Progress = progressBar.Progress,
         ParentGoalId = progressBar.ParentGoalId,
         DayCounters = progressBar.DayCounters?.Select(dayCounter => new DayCounterDto
         {

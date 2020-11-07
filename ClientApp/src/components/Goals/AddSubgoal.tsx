@@ -25,6 +25,7 @@ import {
 import { FormikHelpers } from "formik";
 import { Redirect } from "react-router-dom";
 import { goalTypes } from "../../constants/goalTypes";
+import startOfDay from "date-fns/startOfDay";
 
 interface IProps {
   parentGoal: IProgressBar;
@@ -72,7 +73,7 @@ export default function AddSubgoal(props: IProps) {
       dayCounter = {
         text: values.text,
         parentGoalId: parentGoal.goalId,
-        startingDate: values.startingDate,
+        startingDate: startOfDay(values.startingDate),
         dayGoal: values.dayGoal,
       };
     } else {

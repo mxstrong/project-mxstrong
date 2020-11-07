@@ -10,16 +10,14 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  fetchCheckboxes,
-  fetchDayCounters,
-  setCurrentGoal,
-} from "../../actions/goals";
+import { fetchDayCounters, setCurrentGoal } from "../../actions/goals";
 import { DAY_COUNTERS_URL } from "../../constants/urls";
 import { IDayCounter } from "../../helpers/types";
 import EditGoal from "./EditGoal";
 import differenceInDays from "date-fns/differenceInDays";
 import parseISO from "date-fns/parseISO";
+import startOfDay from "date-fns/startOfDay";
+import endOfDay from "date-fns/endOfDay";
 
 const useStyles = makeStyles((theme: Theme) => ({
   menu: {
@@ -81,8 +79,14 @@ export default function DayCounter(props: IProps) {
       <Typography variant="h6">
         {dayCounter.text +
           " " +
-          (differenceInDays(Date.now(), parseISO(dayCounter.startingDate)) > 0
-            ? differenceInDays(Date.now(), parseISO(dayCounter.startingDate))
+          (differenceInDays(
+            startOfDay(Date.now()),
+            endOfDay(parseISO(dayCounter.startingDate))
+          ) > 0
+            ? differenceInDays(
+                startOfDay(Date.now()),
+                endOfDay(parseISO(dayCounter.startingDate))
+              )
             : 0) +
           "/" +
           dayCounter.dayGoal}

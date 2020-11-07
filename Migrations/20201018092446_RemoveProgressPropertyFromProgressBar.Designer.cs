@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mxstrong.Models;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,9 +10,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mxstrong.Migrations
 {
     [DbContext(typeof(MxstrongContext))]
-    partial class MxstrongContextModelSnapshot : ModelSnapshot
+    [Migration("20201018092446_RemoveProgressPropertyFromProgressBar")]
+    partial class RemoveProgressPropertyFromProgressBar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -188,9 +190,6 @@ namespace Mxstrong.Migrations
 
                     b.Property<byte[]>("PasswordSalt")
                         .HasColumnType("bytea");
-
-                    b.Property<bool>("Registered")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Role")
                         .IsRequired()

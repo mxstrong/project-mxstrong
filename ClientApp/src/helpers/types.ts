@@ -129,7 +129,6 @@ export interface IUpdateCommentsAction {
 interface IGoal {
   goalId: string;
   text: string;
-  userId: string;
   parentGoalId: string | null;
 }
 
@@ -138,7 +137,6 @@ export interface ICheckbox extends IGoal {
 }
 
 export interface IProgressBar extends IGoal {
-  progress: number;
   dayCounters: IDayCounter[];
   subGoals: ICheckbox[];
   childBars: IProgressBar[];
@@ -173,7 +171,6 @@ export interface IEditGoalData {
 }
 
 export interface IEditDayCounterData extends IEditGoalData {
-  parentGoalId?: string;
   startingDate: Date;
   dayGoal: number;
 }
