@@ -132,12 +132,12 @@ export default function Comment(props: ICommentProps) {
               multiline
               placeholder="Write updated comment's text here"
               value={commentToEdit.text}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setCommentToEdit({
                   ...commentToEdit,
                   text: event.target.value,
-                })
-              }
+                });
+              }}
               variant="outlined"
             />
             <Button color="primary" onClick={handleEdit}>
