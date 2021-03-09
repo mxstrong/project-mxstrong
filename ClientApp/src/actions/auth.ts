@@ -42,13 +42,14 @@ export function loginUser(user: IUserLoginData): AppThunk {
 }
 
 export function loginWithGoogle(idToken: string): AppThunk {
+  console.log(JSON.stringify({ idToken }));
   return async function (dispatch: Dispatch<IUpdateUserAction>) {
     const response = await fetch(GOOGLE_LOGIN_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: idToken,
+      body: JSON.stringify({ idToken }),
     });
     if (response.ok) {
       const response = await fetch(CURRENT_USER_URL, {

@@ -79,7 +79,7 @@ namespace Mxstrong.Controllers
     {
       var userFromRepo = await _repo.Login(registerUserDto.Email, registerUserDto.Password);
 
-      if (userFromRepo == null)
+      if (userFromRepo is null)
       {
         return Unauthorized();
       }
@@ -115,14 +115,14 @@ namespace Mxstrong.Controllers
       return Ok();
     }
     [HttpPost]
-    public async Task<IActionResult> LoginGoogle(string idToken)
+    public async Task<IActionResult> LoginGoogle(GoogleTokenDto googleToken)
     {
-      new GoogleJsonWebSignature.ValidationSettings()
+      var settings = new GoogleJsonWebSignature.ValidationSettings()
       {
         Audience = Enumerable.Repeat(_config["Authentication:Google:ClientId"], 1),
       };
 
-      var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+      var payload = await GoogleJsonWebSignature.ValidateAsync(googleToken.IdToken, settings);
       if (!payload.EmailVerified)
       {
         return Unauthorized();
@@ -200,6 +200,10 @@ namespace Mxstrong.Controllers
     {
       var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
       var user = await _repo.FindUser(userId);
+      if (user is null)
+      {
+        return NotFound();
+      }
       var profile = new UserProfileDto
       {
         UserId = user.UserId,
