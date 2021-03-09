@@ -6,7 +6,12 @@ import {
 } from "../helpers/types";
 import { UPDATE_USER } from "./types";
 import { Dispatch } from "redux";
-import { LOGIN_URL, CURRENT_USER_URL, LOGOUT_URL } from "../constants/urls";
+import {
+  LOGIN_URL,
+  CURRENT_USER_URL,
+  LOGOUT_URL,
+  GOOGLE_LOGIN_URL,
+} from "../constants/urls";
 
 function updateUser(user: IUser): IUpdateUserAction {
   return {
@@ -23,6 +28,28 @@ export function loginUser(user: IUserLoginData): AppThunk {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(user),
+    });
+    if (response.ok) {
+      const response = await fetch(CURRENT_USER_URL, {
+        method: "GET",
+      });
+      const user = await response.json();
+      dispatch(updateUser(user));
+    } else {
+      return Promise.reject();
+    }
+  };
+}
+
+export function loginWithGoogle(idToken: string): AppThunk {
+  console.log(JSON.stringify({ idToken }));
+  return async function (dispatch: Dispatch<IUpdateUserAction>) {
+    const response = await fetch(GOOGLE_LOGIN_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ idToken }),
     });
     if (response.ok) {
       const response = await fetch(CURRENT_USER_URL, {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Mxstrong.Data;
 using Mxstrong.Dtos;
 using Mxstrong.Models;
 
@@ -18,10 +19,12 @@ namespace Mxstrong.Controllers
   public class CommentsController : ControllerBase
   {
     private readonly MxstrongContext _context;
+    private readonly IAuthRepository _authRepo;
 
-    public CommentsController(MxstrongContext context)
+    public CommentsController(MxstrongContext context, IAuthRepository authRepo)
     {
       _context = context;
+      _authRepo = authRepo;
     }
     
     [AllowAnonymous]
@@ -45,11 +48,12 @@ namespace Mxstrong.Controllers
           return BadRequest();
       }
 
-      var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+      var currentUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+      var currentUser = await _authRepo.FindUser(currentUserId);
 
       var existingComment = await _context.Comments.FindAsync(id);
 
-      if (userId != existingComment.UserId && existingComment.User.Role != Role.Admin)
+      if (currentUserId != existingComment.UserId && currentUser.Role != Role.Admin)
       {
         return Unauthorized();
       }

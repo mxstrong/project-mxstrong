@@ -21,6 +21,7 @@ import {
 import { goalTypes } from "../../constants/goalTypes";
 import parseISO from "date-fns/parseISO";
 import startOfDay from "date-fns/startOfDay";
+import { format } from "date-fns";
 
 interface IProps {
   formOpen: boolean;
@@ -70,7 +71,7 @@ export default function EditGoal(props: IProps) {
       editedDayCounter = {
         goalId: currentGoal.goalId,
         text: values.text,
-        startingDate: startOfDay(values.startingDate),
+        startingDate: format(values.startingDate, "yyyy-MM-dd"),
         dayGoal: values.dayGoal,
         parentGoalId: currentGoal.parentGoalId ? currentGoal.parentGoalId : "",
       };
@@ -91,12 +92,14 @@ export default function EditGoal(props: IProps) {
       url = DAY_COUNTERS_URL;
     }
 
+    console.log(editedDayCounter);
+
     const response = await fetch(
       url +
         "/" +
-        (editedGoal
+        (editedGoal !== null
           ? editedGoal.goalId
-          : editedDayCounter
+          : editedDayCounter !== null
           ? editedDayCounter.goalId
           : ""),
       {
@@ -104,7 +107,9 @@ export default function EditGoal(props: IProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(editedGoal ? editedGoal : editedDayCounter),
+        body: JSON.stringify(
+          editedGoal !== null ? editedGoal : editedDayCounter
+        ),
       }
     );
 

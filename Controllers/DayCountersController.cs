@@ -45,7 +45,7 @@ namespace Mxstrong.Controllers
           var existingCounter = await _context.DayCounters.FindAsync(id);
 
           existingCounter.Text = dayCounter.Text;
-          existingCounter.StartingDate = dayCounter.StartingDate;
+          existingCounter.StartingDate = DateTime.ParseExact(dayCounter.StartingDate, "yyyy-MM-dd", null).Date;
           existingCounter.DayGoal = int.Parse(dayCounter.DayGoal);
           existingCounter.UpdatedAt = DateTime.Now;
 

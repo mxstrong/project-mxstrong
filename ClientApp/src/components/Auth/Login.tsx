@@ -2,11 +2,14 @@ import React from "react";
 import { makeStyles, Paper, Button, Typography } from "@material-ui/core";
 import { Link, Redirect } from "react-router-dom";
 import { IIndexable, IUserLoginData } from "../../helpers/types";
-import { loginUser } from "../../actions/auth";
+import { loginUser, loginWithGoogle } from "../../actions/auth";
 import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../../reducers";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import { TextField } from "formik-material-ui";
+import GoogleLogin from "react-google-login";
+import { clientId } from "../../constants/googleClientId";
+import googleIcon from "./google-icon.svg";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -29,7 +32,24 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(2),
   },
   button: {
-    width: "80%",
+    width: "100%",
+    margin: theme.spacing(1),
+  },
+  signInButtons: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  googleButton: {
+    backgroundColor: "#ffffff",
+  },
+  googleButtonText: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+  },
+  googleIcon: {
+    height: "18px",
+    width: "18px",
+    paddingRight: theme.spacing(3 / 4),
   },
 }));
 
@@ -61,6 +81,12 @@ export default function LoginForm() {
   const classes = useStyles();
   const user = useSelector((state: AppState) => state.auth.user);
   const dispatch = useDispatch();
+
+  function onSignIn(googleUser: any) {
+    const idToken = googleUser.tokenId;
+    dispatch(loginWithGoogle(idToken));
+  }
+
   if (user.userId) {
     return <Redirect to="/" />;
   }
@@ -102,15 +128,40 @@ export default function LoginForm() {
               label="Password"
               variant="outlined"
             />
-            <Button
-              className={classes.button}
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={isSubmitting}
-            >
-              Login
-            </Button>
+            <div className={classes.signInButtons}>
+              <Button
+                className={classes.button}
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={isSubmitting}
+              >
+                Login
+              </Button>
+              <GoogleLogin
+                render={(renderProps) => (
+                  <Button
+                    className={classes.button + " " + classes.googleButton}
+                    variant="contained"
+                    onClick={renderProps.onClick}
+                    disabled={renderProps.disabled}
+                  >
+                    <img
+                      src={googleIcon}
+                      alt="Google icon"
+                      className={classes.googleIcon}
+                    />
+                    <div className={classes.googleButtonText}>
+                      Sign in With Google
+                    </div>
+                  </Button>
+                )}
+                clientId={clientId}
+                buttonText="Login with google"
+                onSuccess={onSignIn}
+                cookiePolicy={"single_host_origin"}
+              />
+            </div>
           </Form>
         )}
       </Formik>

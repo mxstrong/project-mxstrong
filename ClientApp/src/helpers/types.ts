@@ -171,7 +171,7 @@ export interface IEditGoalData {
 }
 
 export interface IEditDayCounterData extends IEditGoalData {
-  startingDate: Date;
+  startingDate: string;
   dayGoal: number;
 }
 

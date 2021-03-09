@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mxstrong.Models;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,9 +10,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mxstrong.Migrations
 {
     [DbContext(typeof(MxstrongContext))]
-    partial class MxstrongContextModelSnapshot : ModelSnapshot
+    [Migration("20201106130838_AddRegisteredPropertyToUser")]
+    partial class AddRegisteredPropertyToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -234,6 +236,9 @@ namespace Mxstrong.Migrations
             modelBuilder.Entity("Mxstrong.Models.ProgressBar", b =>
                 {
                     b.HasBaseType("Mxstrong.Models.Goal");
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("integer");
 
                     b.HasIndex("ParentGoalId");
 
