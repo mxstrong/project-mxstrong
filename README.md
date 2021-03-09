@@ -8,6 +8,9 @@ Authentication, Email verification, Ability to add/update/delete posts, create n
 ### Update v1.1
 Added ability to add/update/delete personal goals of 3 types (progress bar, checkbox and day counter) and track their progress.
 
+### Update v1.2
+Added authentication option to sign in using Google. Fixed some existing bugs and worked on fixing the remaining ones.
+
 ## Tech Stack:
 Back-end: C#, ASP.NET Core 3.1, PostgreSQL, Entity Framework Core, SendGrid for email sending.
 
