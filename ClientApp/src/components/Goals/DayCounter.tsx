@@ -80,12 +80,12 @@ export default function DayCounter(props: IProps) {
         {dayCounter.text +
           " " +
           (differenceInDays(
-            startOfDay(Date.now()),
-            endOfDay(parseISO(dayCounter.startingDate))
+            Date.now(),
+            startOfDay(parseISO(dayCounter.startingDate))
           ) > 0
             ? differenceInDays(
-                startOfDay(Date.now()),
-                endOfDay(parseISO(dayCounter.startingDate))
+                Date.now(),
+                startOfDay(parseISO(dayCounter.startingDate))
               )
             : 0) +
           "/" +
